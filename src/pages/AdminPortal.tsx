@@ -24,6 +24,7 @@ import CandidateManagement from "@/components/admin/CandidateManagement";
 import ClanManagement from "@/components/admin/ClanManagement";
 import ElectionSettings from "@/components/admin/ElectionSettings";
 import StatsView from "@/components/admin/StatsView";
+import VotingRules from "@/components/admin/VotingRules";
 
 const AdminPortal = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -162,7 +163,7 @@ const AdminPortal = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
             <TabsTrigger value="dashboard" className="gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -178,6 +179,10 @@ const AdminPortal = () => {
             <TabsTrigger value="clans" className="gap-2">
               <Layers className="h-4 w-4" />
               <span className="hidden sm:inline">Clans</span>
+            </TabsTrigger>
+            <TabsTrigger value="rules" className="gap-2">
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Rules</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="gap-2">
               <Settings className="h-4 w-4" />
@@ -207,6 +212,10 @@ const AdminPortal = () => {
 
           <TabsContent value="clans">
             <ClanManagement />
+          </TabsContent>
+
+          <TabsContent value="rules">
+            <VotingRules />
           </TabsContent>
 
           <TabsContent value="settings">

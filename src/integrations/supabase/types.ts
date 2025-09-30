@@ -256,6 +256,42 @@ export type Database = {
           },
         ]
       }
+      voting_rules: {
+        Row: {
+          can_vote_for_batch: Database["public"]["Enums"]["batch_type"]
+          can_vote_for_section: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          same_clan_only: boolean | null
+          updated_at: string | null
+          voter_batch: Database["public"]["Enums"]["batch_type"]
+          voter_section: string | null
+        }
+        Insert: {
+          can_vote_for_batch: Database["public"]["Enums"]["batch_type"]
+          can_vote_for_section?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          same_clan_only?: boolean | null
+          updated_at?: string | null
+          voter_batch: Database["public"]["Enums"]["batch_type"]
+          voter_section?: string | null
+        }
+        Update: {
+          can_vote_for_batch?: Database["public"]["Enums"]["batch_type"]
+          can_vote_for_section?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          same_clan_only?: boolean | null
+          updated_at?: string | null
+          voter_batch?: Database["public"]["Enums"]["batch_type"]
+          voter_section?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
