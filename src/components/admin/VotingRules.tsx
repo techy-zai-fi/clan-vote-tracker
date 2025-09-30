@@ -262,12 +262,12 @@ const VotingRules = () => {
                 </div>
                 <div>
                   <Label>Voter Batch (Optional)</Label>
-                  <Select value={formData.voter_section} onValueChange={(v) => setFormData({ ...formData, voter_section: v })}>
+                  <Select value={formData.voter_section} onValueChange={(v) => setFormData({ ...formData, voter_section: v === 'all' ? '' : v })}>
                     <SelectTrigger>
                       <SelectValue placeholder="All batches" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       <SelectItem value="3">3</SelectItem>
                       <SelectItem value="11">11</SelectItem>
                       <SelectItem value="2025">2025</SelectItem>
@@ -299,12 +299,12 @@ const VotingRules = () => {
                 </div>
                 <div>
                   <Label>Candidate Batch (Optional)</Label>
-                  <Select value={formData.can_vote_for_section} onValueChange={(v) => setFormData({ ...formData, can_vote_for_section: v })}>
+                  <Select value={formData.can_vote_for_section} onValueChange={(v) => setFormData({ ...formData, can_vote_for_section: v === 'all' ? '' : v })}>
                     <SelectTrigger>
                       <SelectValue placeholder="All batches" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       <SelectItem value="3">3</SelectItem>
                       <SelectItem value="11">11</SelectItem>
                       <SelectItem value="2025">2025</SelectItem>
