@@ -1,30 +1,33 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { getDB, Clan } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 
 const ClansOverview = () => {
-  const [clans, setClans] = useState<Clan[]>([]);
+  const [clans, setClans] = useState<any[]>([]);
 
   useEffect(() => {
     loadClans();
   }, []);
 
   const loadClans = async () => {
-    const db = await getDB();
-    const allClans = await db.getAllFromIndex('clans', 'by-order');
-    setClans(allClans);
+    const { data } = await supabase
+      .from('clans')
+      .select('*')
+      .order('display_order');
+    
+    if (data) setClans(data);
   };
 
   const getClanGradient = (clanId: string) => {
     const gradients: Record<string, string> = {
-      BD: 'from-red-600 to-red-700',
-      AS: 'from-purple-600 to-purple-700',
-      DR: 'from-orange-600 to-orange-700',
-      GA: 'from-green-600 to-green-700',
-      MA: 'from-blue-600 to-blue-700',
-      VI: 'from-violet-600 to-violet-700',
+      MM: 'from-blue-600 to-blue-700',
+      SS: 'from-gray-600 to-gray-700',
+      WW: 'from-sky-600 to-sky-700',
+      YY: 'from-yellow-600 to-yellow-700',
+      AA: 'from-amber-600 to-amber-700',
+      NN: 'from-indigo-600 to-indigo-700',
     };
     return gradients[clanId] || 'from-primary to-accent';
   };
