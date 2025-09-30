@@ -27,6 +27,8 @@ const ClanManagement = () => {
     logo_url: "",
     bg_image: "",
     display_order: 0,
+    main_color: "#3B82F6",
+    sub_color: "#1E40AF",
   });
   const { toast } = useToast();
 
@@ -52,6 +54,8 @@ const ClanManagement = () => {
       logo_url: clan.logo_url || "",
       bg_image: clan.bg_image || "",
       display_order: clan.display_order,
+      main_color: clan.main_color || "#3B82F6",
+      sub_color: clan.sub_color || "#1E40AF",
     });
     setShowEditDialog(true);
   };
@@ -66,6 +70,8 @@ const ClanManagement = () => {
           logo_url: formData.logo_url,
           bg_image: formData.bg_image,
           display_order: formData.display_order,
+          main_color: formData.main_color,
+          sub_color: formData.sub_color,
         })
         .eq('id', formData.id);
 
@@ -259,6 +265,47 @@ const ClanManagement = () => {
               <p className="text-xs text-muted-foreground mt-1">
                 Public URL to clan background image for voting page
               </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Main Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={formData.main_color}
+                    onChange={(e) => setFormData({ ...formData, main_color: e.target.value })}
+                    className="w-20 h-10 cursor-pointer"
+                  />
+                  <Input
+                    value={formData.main_color}
+                    onChange={(e) => setFormData({ ...formData, main_color: e.target.value })}
+                    placeholder="#3B82F6"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Primary clan color for graphics
+                </p>
+              </div>
+              <div>
+                <Label>Sub Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={formData.sub_color}
+                    onChange={(e) => setFormData({ ...formData, sub_color: e.target.value })}
+                    className="w-20 h-10 cursor-pointer"
+                  />
+                  <Input
+                    value={formData.sub_color}
+                    onChange={(e) => setFormData({ ...formData, sub_color: e.target.value })}
+                    placeholder="#1E40AF"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Secondary clan color for accents
+                </p>
+              </div>
             </div>
 
             {/* Preview */}

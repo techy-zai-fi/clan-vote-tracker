@@ -58,7 +58,7 @@ const Landing = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex justify-center mb-16">
             <Link to="/clans">
               <Button 
                 size="lg" 
@@ -66,16 +66,6 @@ const Landing = () => {
               >
                 <Swords className="mr-2 h-6 w-6" />
                 Enter the Arena
-              </Button>
-            </Link>
-            <Link to="/voters">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-2 border-secondary text-primary-foreground hover:bg-secondary/20 text-lg px-10 py-7 rounded-xl backdrop-blur-sm"
-              >
-                <Target className="mr-2 h-6 w-6" />
-                Register to Vote
               </Button>
             </Link>
           </div>

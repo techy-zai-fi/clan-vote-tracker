@@ -112,24 +112,30 @@ export type Database = {
           display_order: number | null
           id: string
           logo_url: string | null
+          main_color: string | null
           name: string
           quote: string | null
+          sub_color: string | null
         }
         Insert: {
           bg_image?: string | null
           display_order?: number | null
           id: string
           logo_url?: string | null
+          main_color?: string | null
           name: string
           quote?: string | null
+          sub_color?: string | null
         }
         Update: {
           bg_image?: string | null
           display_order?: number | null
           id?: string
           logo_url?: string | null
+          main_color?: string | null
           name?: string
           quote?: string | null
+          sub_color?: string | null
         }
         Relationships: []
       }

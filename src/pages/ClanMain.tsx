@@ -45,16 +45,19 @@ const ClanMain = () => {
     if (candidatesData) setCandidates(candidatesData);
   };
 
-  const getClanGradient = (clanId: string) => {
-    const gradients: Record<string, string> = {
-      MM: 'from-blue-600 to-blue-700',
-      SS: 'from-gray-600 to-gray-700',
-      WW: 'from-sky-600 to-sky-700',
-      YY: 'from-yellow-600 to-yellow-700',
-      AA: 'from-amber-600 to-amber-700',
-      NN: 'from-indigo-600 to-indigo-700',
+  const getClanStyle = () => {
+    if (!clan?.main_color || !clan?.sub_color) {
+      return {
+        background: `linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))`,
+        mainColor: '#3B82F6',
+        subColor: '#1E40AF',
+      };
+    }
+    return {
+      background: `linear-gradient(135deg, ${clan.main_color}, ${clan.sub_color})`,
+      mainColor: clan.main_color,
+      subColor: clan.sub_color,
     };
-    return gradients[clanId] || 'from-primary to-accent';
   };
 
   const handleVoteNow = () => {
@@ -86,11 +89,20 @@ const ClanMain = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Clan Arena Header */}
-      <header className={`relative bg-gradient-to-br ${getClanGradient(clanId)} text-white overflow-hidden`}>
+      <header 
+        className="relative text-white overflow-hidden"
+        style={{ background: getClanStyle().background }}
+      >
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-black rounded-full blur-3xl"></div>
+        </div>
+        {/* Decorative Graphics */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 border-4 border-white rotate-45"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 border-4 border-white rounded-full"></div>
+          <div className="absolute top-1/2 right-1/4 w-24 h-24 border-4 border-white" style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)' }}></div>
         </div>
         <div className="container mx-auto px-4 py-8 relative">
           <Link to="/clans">
@@ -113,7 +125,13 @@ const ClanMain = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Call to Action Section */}
         <Card className="relative overflow-hidden mb-16 border-2 hover-lift">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5"></div>
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={{ background: `linear-gradient(135deg, ${getClanStyle().mainColor}20, ${getClanStyle().subColor}20)` }}
+          ></div>
+          {/* Decorative corner elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 opacity-5" style={{ background: getClanStyle().mainColor, clipPath: 'polygon(100% 0, 100% 100%, 0 0)' }}></div>
+          <div className="absolute bottom-0 left-0 w-32 h-32 opacity-5" style={{ background: getClanStyle().subColor, clipPath: 'polygon(0 100%, 100% 100%, 0 0)' }}></div>
           <div className="relative p-12 text-center">
             <div className="mb-6">
               <Swords className="h-20 w-20 mx-auto text-primary" />
@@ -131,7 +149,8 @@ const ClanMain = () => {
               <Button 
                 size="lg" 
                 onClick={handleVoteNow} 
-                className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-accent hover:shadow-2xl"
+                className="text-lg px-12 py-6 text-white hover:shadow-2xl transition-all hover:scale-105"
+                style={{ background: `linear-gradient(135deg, ${getClanStyle().mainColor}, ${getClanStyle().subColor})` }}
               >
                 <Swords className="mr-2 h-6 w-6" />
                 Cast Your Vote
@@ -183,8 +202,11 @@ const ClanMain = () => {
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
-                          ) : (
-                            <div className={`h-48 bg-gradient-to-br ${getClanGradient(clanId)} flex items-center justify-center`}>
+                           ) : (
+                            <div 
+                              className="h-48 flex items-center justify-center"
+                              style={{ background: `linear-gradient(135deg, ${getClanStyle().mainColor}, ${getClanStyle().subColor})` }}
+                            >
                               <Shield className="h-16 w-16 text-white/50" />
                             </div>
                           )}
