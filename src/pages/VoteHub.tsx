@@ -18,12 +18,15 @@ const VoteHub = () => {
       navigate('/voters');
       return;
     }
+    
     const parsedVoter = JSON.parse(voterData);
     setVoter(parsedVoter);
     
     // Auto-redirect to voter's clan since voting is clan-only
-    if (parsedVoter.clan) {
-      navigate(`/vote/${parsedVoter.clan}`);
+    if (parsedVoter?.clan) {
+      setTimeout(() => {
+        navigate(`/vote/${parsedVoter.clan}`);
+      }, 100);
     }
   }, [navigate]);
 

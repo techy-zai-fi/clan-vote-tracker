@@ -131,8 +131,17 @@ const VoterLookup = () => {
 
   const handleProceedToVote = () => {
     if (voter || (email && regNum)) {
-      // Store voter info in session
-      sessionStorage.setItem('voter', JSON.stringify({ email: email || voter?.email, reg_num: regNum || voter?.reg_num, name: name || voter?.name, batch: batch || voter?.batch }));
+      // Store voter info in session with clan data
+      const voterData = {
+        email: email || voter?.email,
+        reg_num: regNum || voter?.reg_num,
+        name: name || voter?.name,
+        batch: batch || voter?.batch,
+        clan: clan || voter?.clan,
+        gender: gender || voter?.gender,
+        year: year || voter?.year,
+      };
+      sessionStorage.setItem('voter', JSON.stringify(voterData));
       navigate('/vote');
     }
   };
