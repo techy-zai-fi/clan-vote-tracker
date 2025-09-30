@@ -159,7 +159,7 @@ const ClanVoting = () => {
       });
 
       // Navigate back to home after short delay
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate(`/clans/${clanId}`), 1500);
     } catch (error: any) {
       console.error('Vote error:', error);
       toast({
@@ -192,10 +192,10 @@ const ClanVoting = () => {
       <div className={`bg-gradient-to-br ${getClanGradient()} py-16 relative`}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="container mx-auto px-4 relative z-10">
-          <Link to="/">
+          <Link to={`/clans/${clanId}`}>
             <Button variant="ghost" className="text-white hover:bg-white/20 mb-4">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
+              Back to Clan
             </Button>
           </Link>
           <div className="text-center text-white">
@@ -272,10 +272,10 @@ const ClanVoting = () => {
               <div className="mt-8 flex gap-3">
                 <Button 
                   variant="outline" 
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate(`/clans/${clanId}`)}
                   className="flex-1"
                 >
-                  Back to Home
+                  Back to Clan
                 </Button>
                 <Button 
                   onClick={handleSubmit}

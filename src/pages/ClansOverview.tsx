@@ -49,7 +49,7 @@ const ClansOverview = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clans.map((clan) => (
-            <Link key={clan.id} to={`/vote/${clan.id}`}>
+            <Link key={clan.id} to={`/clans/${clan.id}`}>
               <Card className="overflow-hidden hover-scale cursor-pointer group">
                 <div className={`h-48 bg-gradient-to-br ${getClanGradient(clan.id)} flex items-center justify-center relative overflow-hidden`}>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
@@ -63,7 +63,7 @@ const ClansOverview = () => {
                     "{clan.quote}"
                   </p>
                   <div className="flex items-center text-primary font-semibold group-hover:gap-3 gap-2 transition-all">
-                    View Candidates
+                    View Clan
                     <ArrowRight className="h-4 w-4" />
                   </div>
                 </div>

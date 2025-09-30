@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import VoterLookup from "./pages/VoterLookup";
 import ClansOverview from "./pages/ClansOverview";
+import ClanMain from "./pages/ClanMain";
 import VoteHub from "./pages/VoteHub";
 import ClanVoting from "./pages/ClanVoting";
 import AdminPortal from "./pages/AdminPortal";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/voters" element={<VoterLookup />} />
           <Route path="/clans" element={<ClansOverview />} />
+          <Route path="/clans/:clanId" element={<ClanMain />} />
           <Route path="/vote" element={<VoteHub />} />
           <Route path="/vote/:clanId" element={<ClanVoting />} />
           <Route path="/admin" element={<AdminPortal />} />

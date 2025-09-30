@@ -40,14 +40,8 @@ const Landing = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link to="/voters">
-              <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-6">
-                <Users className="mr-2 h-5 w-5" />
-                Find Me & Vote
-              </Button>
-            </Link>
             <Link to="/clans">
-              <Button size="lg" variant="outline" className="border-2 border-white/30 text-primary-foreground hover:bg-white/10 text-lg px-8 py-6">
+              <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-6">
                 View Clans
               </Button>
             </Link>
