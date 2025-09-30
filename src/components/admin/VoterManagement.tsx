@@ -399,6 +399,7 @@ const VoterManagement = () => {
                     <SelectItem value="HHM">HHM</SelectItem>
                     <SelectItem value="DBM">DBM</SelectItem>
                     <SelectItem value="IPM">IPM</SelectItem>
+                    <SelectItem value="PHD">PHD</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
