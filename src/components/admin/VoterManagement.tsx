@@ -76,21 +76,29 @@ const VoterManagement = () => {
       complete: async (results) => {
         try {
           setIsLoading(true);
-          const votersData = results.data
+          
+          // Process and deduplicate by reg_num (keeping the last occurrence)
+          const votersMap = new Map();
+          results.data
             .filter((row: any) => row.email && row.reg_no)
-            .map((row: any) => ({
-              email: row.email.trim(),
-              reg_num: row.reg_no.trim(),
-              name: row.name.trim(),
-              gender: row.gender.trim(),
-              clan: row.clan_id.trim(),
-              batch: row.section.trim(),
-              year: parseInt(row.batch) || 0,
-            }));
+            .forEach((row: any) => {
+              const voterData = {
+                email: row.email.trim(),
+                reg_num: row.reg_no.trim(),
+                name: row.name.trim(),
+                gender: row.gender.trim(),
+                clan: row.clan_id.trim(),
+                batch: row.section.trim(),
+                year: parseInt(row.batch) || 0,
+              };
+              votersMap.set(voterData.reg_num, voterData);
+            });
+
+          const votersData = Array.from(votersMap.values());
 
           const { error } = await supabase
             .from('voter_registry')
-            .upsert(votersData, { onConflict: 'email' });
+            .upsert(votersData, { onConflict: 'reg_num' });
 
           if (error) throw error;
 

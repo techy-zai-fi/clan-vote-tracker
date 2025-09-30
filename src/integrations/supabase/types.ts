@@ -264,7 +264,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD"
+      batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD" | "SEP"
       gender_type: "Male" | "Female" | "Other" | "Prefer not to say"
     }
     CompositeTypes: {
@@ -393,7 +393,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD"],
+      batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD", "SEP"],
       gender_type: ["Male", "Female", "Other", "Prefer not to say"],
     },
   },
