@@ -77,20 +77,20 @@ const VoterManagement = () => {
         try {
           setIsLoading(true);
           const votersData = results.data
-            .filter((row: any) => row.email && row.reg_num)
+            .filter((row: any) => row.email && row.reg_no)
             .map((row: any) => ({
               email: row.email.trim(),
-              reg_num: row.reg_num.trim(),
+              reg_num: row.reg_no.trim(),
               name: row.name.trim(),
               gender: row.gender.trim(),
-              clan: row.clan.trim(),
-              batch: row.batch.trim(),
-              year: parseInt(row.year),
+              clan: row.clan_id.trim(),
+              batch: row.section.trim(),
+              year: parseInt(row.batch) || 0,
             }));
 
           const { error } = await supabase
             .from('voter_registry')
-            .upsert(votersData);
+            .upsert(votersData, { onConflict: 'email' });
 
           if (error) throw error;
 
@@ -102,7 +102,7 @@ const VoterManagement = () => {
 
           toast({
             title: "Success",
-            description: `${votersData.length} voters uploaded`,
+            description: `${votersData.length} voters uploaded successfully`,
           });
 
           loadVoters();
@@ -271,8 +271,8 @@ const VoterManagement = () => {
                 <TableHead>Reg #</TableHead>
                 <TableHead>Gender</TableHead>
                 <TableHead>Clan</TableHead>
+                <TableHead>Section</TableHead>
                 <TableHead>Batch</TableHead>
-                <TableHead>Year</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -374,16 +374,25 @@ const VoterManagement = () => {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label>Clan</Label>
-                <Input
-                  value={formData.clan}
-                  onChange={(e) => setFormData({ ...formData, clan: e.target.value })}
-                />
+                <Select value={formData.clan} onValueChange={(v) => setFormData({ ...formData, clan: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select clan" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    <SelectItem value="MM">MM - Mahanadi</SelectItem>
+                    <SelectItem value="SS">SS - Shivalik</SelectItem>
+                    <SelectItem value="WW">WW - Windward</SelectItem>
+                    <SelectItem value="YY">YY - Yamuna</SelectItem>
+                    <SelectItem value="AA">AA - Aravali</SelectItem>
+                    <SelectItem value="NN">NN - Nilgiri</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label>Batch</Label>
+                <Label>Section</Label>
                 <Select value={formData.batch} onValueChange={(v) => setFormData({ ...formData, batch: v })}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select section" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
                     <SelectItem value="MBA">MBA</SelectItem>
@@ -394,9 +403,10 @@ const VoterManagement = () => {
                 </Select>
               </div>
               <div>
-                <Label>Year</Label>
+                <Label>Batch</Label>
                 <Input
                   type="number"
+                  placeholder="e.g., 3, 11"
                   value={formData.year}
                   onChange={(e) => setFormData({ ...formData, year: e.target.value })}
                 />
