@@ -18,9 +18,14 @@ const VoteHub = () => {
       navigate('/voters');
       return;
     }
-    setVoter(JSON.parse(voterData));
-    loadData();
-  }, []);
+    const parsedVoter = JSON.parse(voterData);
+    setVoter(parsedVoter);
+    
+    // Auto-redirect to voter's clan since voting is clan-only
+    if (parsedVoter.clan) {
+      navigate(`/vote/${parsedVoter.clan}`);
+    }
+  }, [navigate]);
 
   const loadData = async () => {
     const voterData = JSON.parse(sessionStorage.getItem('voter') || '{}');
@@ -58,92 +63,24 @@ const VoteHub = () => {
     return gradients[clanId] || 'from-primary to-accent';
   };
 
-  if (!voter) return null;
+  if (!voter) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="p-8 text-center">
+          <p className="text-muted-foreground">Redirecting to your clan voting page...</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 py-6">
-          <Link to="/" className="text-xl font-bold hover:text-secondary">
-            ← IIMBG Elections
-          </Link>
-          <div className="mt-4">
-            <h1 className="text-3xl font-bold">Voting Hub</h1>
-            <p className="text-primary-foreground/80 mt-2">
-              {voter.name} • {voter.batch} • {voter.reg_num}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-12">
-        {/* Progress Tracker */}
-        <Card className="p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4">Your Voting Progress</h2>
-          <div className="flex gap-3 justify-center flex-wrap">
-            {clans.map((clan) => (
-              <div key={clan.id} className="flex flex-col items-center">
-                {hasVotedInClan(clan.id) ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
-                ) : (
-                  <Circle className="h-8 w-8 text-muted-foreground" />
-                )}
-                <span className="text-sm font-medium mt-1">{clan.id}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-center mt-4 text-muted-foreground">
-            Voted in {votes.length} of {clans.length} clans
-          </p>
-        </Card>
-
-        {/* Clan Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clans.map((clan) => (
-            <Link key={clan.id} to={`/vote/${clan.id}`}>
-              <Card className="overflow-hidden hover-scale cursor-pointer group">
-                <div className={`h-40 bg-gradient-to-br ${getClanGradient(clan.id)} flex items-center justify-center relative`}>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                  <div className="relative z-10 text-center text-white">
-                    <div className="text-5xl font-bold mb-2">{clan.id}</div>
-                    <div className="text-xl font-semibold">{clan.name}</div>
-                  </div>
-                  {hasVotedInClan(clan.id) && (
-                    <div className="absolute top-3 right-3">
-                      <CheckCircle2 className="h-6 w-6 text-white drop-shadow-lg" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-5">
-                  <p className="text-sm text-muted-foreground italic mb-3">
-                    "{clan.quote}"
-                  </p>
-                  <Button className="w-full" variant={hasVotedInClan(clan.id) ? "outline" : "default"}>
-                    {hasVotedInClan(clan.id) ? "View/Change Vote" : "Cast Vote"}
-                  </Button>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
-
-        {votes.length === clans.length && (
-          <div className="mt-8 text-center">
-            <Card className="p-8 bg-green-50 border-green-200">
-              <CheckCircle2 className="h-16 w-16 text-green-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-green-900 mb-2">All Votes Cast!</h3>
-              <p className="text-green-700 mb-4">
-                You've voted in all {clans.length} clans. Thank you for participating!
-              </p>
-              <Link to="/receipt">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700">
-                  View Receipt
-                </Button>
-              </Link>
-            </Card>
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <Card className="p-8 text-center max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Redirecting...</h2>
+        <p className="text-muted-foreground">
+          Taking you to {voter.clan} clan voting page.
+        </p>
+      </Card>
     </div>
   );
 };

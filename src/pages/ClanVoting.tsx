@@ -38,9 +38,22 @@ const ClanVoting = () => {
       navigate('/voters');
       return;
     }
-    setVoter(JSON.parse(voterData));
+    const parsedVoter = JSON.parse(voterData);
+    
+    // Enforce same-clan-only voting
+    if (parsedVoter.clan !== clanId) {
+      toast({
+        title: "Access Denied",
+        description: "You can only vote in your own clan. Redirecting...",
+        variant: "destructive",
+      });
+      setTimeout(() => navigate(`/vote/${parsedVoter.clan}`), 2000);
+      return;
+    }
+    
+    setVoter(parsedVoter);
     loadData();
-  }, [clanId]);
+  }, [clanId, navigate, toast]);
 
   const loadData = async () => {
     const voterData = JSON.parse(sessionStorage.getItem('voter') || '{}');
@@ -145,8 +158,8 @@ const ClanVoting = () => {
         description: `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully.`,
       });
 
-      // Navigate back to vote hub after short delay
-      setTimeout(() => navigate('/vote'), 1500);
+      // Navigate back to home after short delay
+      setTimeout(() => navigate('/'), 1500);
     } catch (error: any) {
       console.error('Vote error:', error);
       toast({
@@ -179,10 +192,10 @@ const ClanVoting = () => {
       <div className={`bg-gradient-to-br ${getClanGradient()} py-16 relative`}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="container mx-auto px-4 relative z-10">
-          <Link to="/vote">
+          <Link to="/">
             <Button variant="ghost" className="text-white hover:bg-white/20 mb-4">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Vote Hub
+              Back to Home
             </Button>
           </Link>
           <div className="text-center text-white">
@@ -259,10 +272,10 @@ const ClanVoting = () => {
               <div className="mt-8 flex gap-3">
                 <Button 
                   variant="outline" 
-                  onClick={() => navigate('/vote')}
+                  onClick={() => navigate('/')}
                   className="flex-1"
                 >
-                  Cancel
+                  Back to Home
                 </Button>
                 <Button 
                   onClick={handleSubmit}
