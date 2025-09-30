@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import VoterLookup from "./pages/VoterLookup";
 import ClansOverview from "./pages/ClansOverview";
+import VoteHub from "./pages/VoteHub";
+import ClanVoting from "./pages/ClanVoting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/voters" element={<VoterLookup />} />
           <Route path="/clans" element={<ClansOverview />} />
+          <Route path="/vote" element={<VoteHub />} />
+          <Route path="/vote/:clanId" element={<ClanVoting />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
