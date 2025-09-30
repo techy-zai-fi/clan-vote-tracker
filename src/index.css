@@ -6,47 +6,54 @@
 
 @layer base {
   :root {
-    /* Primary - Deep Navy */
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Stadium Dark Blue */
+    --primary: 220 70% 15%;
+    --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Gold */
-    --secondary: 43 96% 56%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Championship Gold */
+    --secondary: 43 100% 55%;
+    --secondary-foreground: 220 70% 15%;
     
-    /* Accent - Lighter Navy */
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent - Victory Purple */
+    --accent: 265 85% 55%;
+    --accent-foreground: 0 0% 100%;
     
     /* Background */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 220 70% 15%;
     
     /* Muted */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 10% 45%;
     
     /* Card */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 70% 15%;
     
     /* Popover */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 220 70% 15%;
     
     /* Border */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 47% 11%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 265 85% 55%;
     
     /* Destructive */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
     
     /* Radius */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     
-    /* Clan Gradients */
+    /* Sport/COC Themed Colors */
+    --champion: 43 100% 55%;
+    --victory: 142 76% 45%;
+    --energy: 33 100% 50%;
+    --power: 265 85% 55%;
+    --strength: 0 84% 60%;
+    
+    /* Clan Gradients - Sport Stadium Themes */
     --clan-bd: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(348 83% 37%) 100%);
     --clan-as: linear-gradient(135deg, hsl(271 76% 53%) 0%, hsl(271 76% 43%) 100%);
     --clan-dr: linear-gradient(135deg, hsl(24 95% 53%) 0%, hsl(24 95% 43%) 100%);
@@ -54,8 +61,10 @@
     --clan-ma: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(199 89% 38%) 100%);
     --clan-vi: linear-gradient(135deg, hsl(280 61% 50%) 0%, hsl(280 61% 40%) 100%);
     
-    /* Animations */
+    /* Animations & Effects */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-glow: 0 0 30px -5px hsl(var(--accent) / 0.3);
+    --shadow-strong: 0 10px 40px -10px hsl(220 70% 15% / 0.2);
   }
 
   .dark {
@@ -93,10 +102,22 @@
 
 @layer utilities {
   .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
   }
   
   .link-underline {
     @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-secondary via-accent to-secondary bg-clip-text text-transparent;
+  }
+  
+  .sport-card {
+    @apply bg-gradient-to-br from-card via-card to-muted/30 border-2 rounded-xl hover-lift;
   }
 }
