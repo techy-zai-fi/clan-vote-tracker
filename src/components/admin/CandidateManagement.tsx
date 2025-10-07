@@ -18,6 +18,9 @@ const CandidateManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
+  const [clans, setClans] = useState<Array<{ id: string; name: string }>>([]);
+  const [batches, setBatches] = useState<string[]>([]);
+  const [years, setYears] = useState<string[]>([]);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -34,6 +37,8 @@ const CandidateManagement = () => {
 
   useEffect(() => {
     loadCandidates();
+    loadClans();
+    loadOptions();
   }, []);
 
   useEffect(() => {
@@ -58,6 +63,30 @@ const CandidateManagement = () => {
     if (data) {
       setCandidates(data);
       setFilteredCandidates(data);
+    }
+  };
+
+  const loadClans = async () => {
+    const { data } = await supabase
+      .from('clans')
+      .select('id, name')
+      .order('display_order');
+    
+    if (data) {
+      setClans(data);
+    }
+  };
+
+  const loadOptions = async () => {
+    const { data: voterData } = await supabase
+      .from('voter_registry')
+      .select('batch, year');
+    
+    if (voterData) {
+      const uniqueBatches = [...new Set(voterData.map(v => v.batch))].sort();
+      const uniqueYears = [...new Set(voterData.map(v => v.year.toString()))].sort();
+      setBatches(uniqueBatches);
+      setYears(uniqueYears);
     }
   };
 
@@ -258,12 +287,11 @@ const CandidateManagement = () => {
                     <SelectValue placeholder="Select clan" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
-                    <SelectItem value="MM">MM - Mahanadi</SelectItem>
-                    <SelectItem value="SS">SS - Shivalik</SelectItem>
-                    <SelectItem value="WW">WW - Windward</SelectItem>
-                    <SelectItem value="YY">YY - Yamuna</SelectItem>
-                    <SelectItem value="AA">AA - Aravali</SelectItem>
-                    <SelectItem value="NN">NN - Nilgiri</SelectItem>
+                    {clans.map((clan) => (
+                      <SelectItem key={clan.id} value={clan.id}>
+                        {clan.id} - {clan.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -301,23 +329,24 @@ const CandidateManagement = () => {
                     <SelectValue placeholder="Select section" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover">
-                    <SelectItem value="MBA">MBA</SelectItem>
-                    <SelectItem value="HHM">HHM</SelectItem>
-                    <SelectItem value="DBM">DBM</SelectItem>
-                    <SelectItem value="IPM">IPM</SelectItem>
-                    <SelectItem value="PHD">PHD</SelectItem>
-                    <SelectItem value="SEP">SEP</SelectItem>
+                    {batches.map((batch) => (
+                      <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
                 <Label>Batch *</Label>
-                <Input
-                  type="number"
-                  placeholder="e.g., 3, 11"
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                />
+                <Select value={formData.year} onValueChange={(v) => setFormData({ ...formData, year: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select batch" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year}>{year}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
