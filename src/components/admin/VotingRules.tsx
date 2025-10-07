@@ -14,6 +14,10 @@ const VotingRules = () => {
   const [rules, setRules] = useState<any[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingRule, setEditingRule] = useState<any>(null);
+  const [voterBatches, setVoterBatches] = useState<string[]>([]);
+  const [voterSections, setVoterSections] = useState<string[]>([]);
+  const [candidateBatches, setCandidateBatches] = useState<string[]>([]);
+  const [candidateSections, setCandidateSections] = useState<string[]>([]);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -27,6 +31,8 @@ const VotingRules = () => {
 
   useEffect(() => {
     loadRules();
+    loadVoterOptions();
+    loadCandidateOptions();
   }, []);
 
   const loadRules = async () => {
@@ -37,6 +43,50 @@ const VotingRules = () => {
     
     if (data) {
       setRules(data);
+    }
+  };
+
+  const loadVoterOptions = async () => {
+    // Get unique batches from voter_registry
+    const { data: voters } = await supabase
+      .from('voter_registry')
+      .select('batch');
+    
+    if (voters) {
+      const uniqueBatches = Array.from(new Set(voters.map(v => v.batch))).sort();
+      setVoterBatches(uniqueBatches);
+    }
+
+    // Get unique sections (years) from voter_registry
+    const { data: voterYears } = await supabase
+      .from('voter_registry')
+      .select('year');
+    
+    if (voterYears) {
+      const uniqueSections = Array.from(new Set(voterYears.map(v => String(v.year)))).sort();
+      setVoterSections(uniqueSections);
+    }
+  };
+
+  const loadCandidateOptions = async () => {
+    // Get unique batches from candidates
+    const { data: candidates } = await supabase
+      .from('candidates')
+      .select('batch');
+    
+    if (candidates) {
+      const uniqueBatches = Array.from(new Set(candidates.map(c => c.batch))).sort();
+      setCandidateBatches(uniqueBatches);
+    }
+
+    // Get unique sections (years) from candidates
+    const { data: candidateYears } = await supabase
+      .from('candidates')
+      .select('year');
+    
+    if (candidateYears) {
+      const uniqueSections = Array.from(new Set(candidateYears.map(c => String(c.year)))).sort();
+      setCandidateSections(uniqueSections);
     }
   };
 
@@ -245,33 +295,29 @@ const VotingRules = () => {
               <h4 className="font-medium text-sm">Voter Eligibility</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Voter Section *</Label>
+                  <Label>Voter Batch *</Label>
                   <Select value={formData.voter_batch} onValueChange={(v) => setFormData({ ...formData, voter_batch: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select section" />
+                      <SelectValue placeholder="Select batch" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      <SelectItem value="MBA">MBA</SelectItem>
-                      <SelectItem value="HHM">HHM</SelectItem>
-                      <SelectItem value="DBM">DBM</SelectItem>
-                      <SelectItem value="IPM">IPM</SelectItem>
-                      <SelectItem value="PHD">PHD</SelectItem>
-                      <SelectItem value="SEP">SEP</SelectItem>
+                      {voterBatches.map((batch) => (
+                        <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label>Voter Batch (Optional)</Label>
+                  <Label>Voter Section (Optional)</Label>
                   <Select value={formData.voter_section} onValueChange={(v) => setFormData({ ...formData, voter_section: v === 'all' ? '' : v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All batches" />
+                      <SelectValue placeholder="All sections" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
                       <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="11">11</SelectItem>
-                      <SelectItem value="2025">2025</SelectItem>
-                      <SelectItem value="2026">2026</SelectItem>
+                      {voterSections.map((section) => (
+                        <SelectItem key={section} value={section}>{section}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -282,33 +328,29 @@ const VotingRules = () => {
               <h4 className="font-medium text-sm">Can Vote For</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Candidate Section *</Label>
+                  <Label>Candidate Batch *</Label>
                   <Select value={formData.can_vote_for_batch} onValueChange={(v) => setFormData({ ...formData, can_vote_for_batch: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select section" />
+                      <SelectValue placeholder="Select batch" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      <SelectItem value="MBA">MBA</SelectItem>
-                      <SelectItem value="HHM">HHM</SelectItem>
-                      <SelectItem value="DBM">DBM</SelectItem>
-                      <SelectItem value="IPM">IPM</SelectItem>
-                      <SelectItem value="PHD">PHD</SelectItem>
-                      <SelectItem value="SEP">SEP</SelectItem>
+                      {candidateBatches.map((batch) => (
+                        <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label>Candidate Batch (Optional)</Label>
+                  <Label>Candidate Section (Optional)</Label>
                   <Select value={formData.can_vote_for_section} onValueChange={(v) => setFormData({ ...formData, can_vote_for_section: v === 'all' ? '' : v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All batches" />
+                      <SelectValue placeholder="All sections" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
                       <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="11">11</SelectItem>
-                      <SelectItem value="2025">2025</SelectItem>
-                      <SelectItem value="2026">2026</SelectItem>
+                      {candidateSections.map((section) => (
+                        <SelectItem key={section} value={section}>{section}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
