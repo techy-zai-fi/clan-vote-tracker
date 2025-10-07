@@ -16,7 +16,8 @@ import {
   BarChart3, 
   Download,
   FileText,
-  Lock
+  Lock,
+  Palette
 } from "lucide-react";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import VoterManagement from "@/components/admin/VoterManagement";
@@ -25,6 +26,7 @@ import ClanManagement from "@/components/admin/ClanManagement";
 import ElectionSettings from "@/components/admin/ElectionSettings";
 import StatsView from "@/components/admin/StatsView";
 import VotingRules from "@/components/admin/VotingRules";
+import BrandingSettings from "@/components/admin/BrandingSettings";
 
 const AdminPortal = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -163,10 +165,14 @@ const AdminPortal = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-9 lg:w-auto lg:inline-grid">
             <TabsTrigger value="dashboard" className="gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="branding" className="gap-2">
+              <Palette className="h-4 w-4" />
+              <span className="hidden sm:inline">Branding</span>
             </TabsTrigger>
             <TabsTrigger value="voters" className="gap-2">
               <Users className="h-4 w-4" />
@@ -200,6 +206,10 @@ const AdminPortal = () => {
 
           <TabsContent value="dashboard">
             <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="branding">
+            <BrandingSettings />
           </TabsContent>
 
           <TabsContent value="voters">

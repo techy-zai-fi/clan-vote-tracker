@@ -143,35 +143,56 @@ export type Database = {
         Row: {
           allow_adhoc_voters: boolean | null
           allow_vote_changes: boolean | null
+          coc_logo: string | null
           end_at: string | null
           frozen: boolean | null
+          home_accent_color: string | null
+          home_bg_end: string | null
+          home_bg_start: string | null
+          home_primary_color: string | null
+          home_secondary_color: string | null
           id: number
           is_live: boolean | null
           show_live_stats: boolean | null
           start_at: string | null
           updated_at: string | null
+          website_logo: string | null
         }
         Insert: {
           allow_adhoc_voters?: boolean | null
           allow_vote_changes?: boolean | null
+          coc_logo?: string | null
           end_at?: string | null
           frozen?: boolean | null
+          home_accent_color?: string | null
+          home_bg_end?: string | null
+          home_bg_start?: string | null
+          home_primary_color?: string | null
+          home_secondary_color?: string | null
           id?: number
           is_live?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
           updated_at?: string | null
+          website_logo?: string | null
         }
         Update: {
           allow_adhoc_voters?: boolean | null
           allow_vote_changes?: boolean | null
+          coc_logo?: string | null
           end_at?: string | null
           frozen?: boolean | null
+          home_accent_color?: string | null
+          home_bg_end?: string | null
+          home_bg_start?: string | null
+          home_primary_color?: string | null
+          home_secondary_color?: string | null
           id?: number
           is_live?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
           updated_at?: string | null
+          website_logo?: string | null
         }
         Relationships: []
       }

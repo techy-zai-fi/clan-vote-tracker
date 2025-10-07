@@ -1,26 +1,74 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Trophy, Swords, Shield, Target, Users, Zap, Crown, Award } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
+  const [branding, setBranding] = useState({
+    website_logo: "",
+    coc_logo: "",
+    home_primary_color: "#3B82F6",
+    home_secondary_color: "#F59E0B",
+    home_accent_color: "#8B5CF6",
+    home_bg_start: "#0F172A",
+    home_bg_end: "#1E293B",
+  });
+
+  useEffect(() => {
+    const loadBranding = async () => {
+      const { data } = await supabase
+        .from('election_settings')
+        .select('*')
+        .eq('id', 1)
+        .single();
+      
+      if (data) {
+        setBranding({
+          website_logo: data.website_logo || "",
+          coc_logo: data.coc_logo || "",
+          home_primary_color: data.home_primary_color || "#3B82F6",
+          home_secondary_color: data.home_secondary_color || "#F59E0B",
+          home_accent_color: data.home_accent_color || "#8B5CF6",
+          home_bg_start: data.home_bg_start || "#0F172A",
+          home_bg_end: data.home_bg_end || "#1E293B",
+        });
+      }
+    };
+    loadBranding();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-accent to-primary relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      style={{ background: `linear-gradient(135deg, ${branding.home_bg_start}, ${branding.home_bg_end})` }}
+    >
       {/* Animated Background */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-secondary rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div 
+          className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl animate-pulse"
+          style={{ backgroundColor: branding.home_secondary_color }}
+        ></div>
+        <div 
+          className="absolute bottom-20 right-10 w-96 h-96 rounded-full blur-3xl animate-pulse delay-700"
+          style={{ backgroundColor: branding.home_accent_color }}
+        ></div>
       </div>
 
       {/* Header */}
-      <header className="relative border-b border-white/10 bg-primary/50 backdrop-blur-sm">
+      <header className="relative border-b border-white/10 backdrop-blur-sm" style={{ backgroundColor: `${branding.home_primary_color}80` }}>
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Trophy className="h-8 w-8 text-secondary" />
-            <h1 className="text-xl font-bold text-primary-foreground">IIMBG COC Elections</h1>
+            {branding.website_logo ? (
+              <img src={branding.website_logo} alt="Logo" className="h-8 object-contain" />
+            ) : (
+              <Trophy className="h-8 w-8" style={{ color: branding.home_secondary_color }} />
+            )}
+            <h1 className="text-xl font-bold text-white">IIMBG COC Elections</h1>
           </div>
           <Link to="/admin">
-            <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-white/10">
+            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
               <Shield className="mr-2 h-4 w-4" />
               Admin
             </Button>
@@ -33,26 +81,44 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto text-center animate-fade-in">
           {/* Main Icon with Glow */}
           <div className="mb-8 relative">
-            <div className="absolute inset-0 blur-2xl bg-secondary/30 rounded-full"></div>
-            <div className="relative inline-flex items-center justify-center p-4 bg-gradient-to-br from-secondary via-accent to-secondary rounded-full mb-4 shadow-2xl">
-              <Swords className="h-20 w-20 text-primary-foreground" />
-            </div>
+            <div 
+              className="absolute inset-0 blur-2xl rounded-full opacity-30"
+              style={{ backgroundColor: branding.home_secondary_color }}
+            ></div>
+            {branding.coc_logo ? (
+              <div className="relative inline-flex items-center justify-center mb-4">
+                <img src={branding.coc_logo} alt="Clash of Clans" className="h-32 w-auto object-contain drop-shadow-2xl" />
+              </div>
+            ) : (
+              <div 
+                className="relative inline-flex items-center justify-center p-4 rounded-full mb-4 shadow-2xl"
+                style={{ background: `linear-gradient(135deg, ${branding.home_secondary_color}, ${branding.home_accent_color})` }}
+              >
+                <Swords className="h-20 w-20 text-white" />
+              </div>
+            )}
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl md:text-7xl font-black text-primary-foreground mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight">
             CLASH OF CLANS
           </h1>
-          <div className="inline-block px-6 py-2 bg-secondary/20 backdrop-blur-sm rounded-full border border-secondary/40 mb-6">
-            <p className="text-2xl md:text-3xl font-bold text-secondary">
+          <div 
+            className="inline-block px-6 py-2 backdrop-blur-sm rounded-full border mb-6"
+            style={{ 
+              backgroundColor: `${branding.home_secondary_color}33`,
+              borderColor: `${branding.home_secondary_color}66`
+            }}
+          >
+            <p className="text-2xl md:text-3xl font-bold" style={{ color: branding.home_secondary_color }}>
               Panch Elections 2025
             </p>
           </div>
           
-          <p className="text-xl md:text-2xl text-primary-foreground/90 mb-4 font-semibold">
+          <p className="text-xl md:text-2xl text-white/90 mb-4 font-semibold">
             Battle for Glory, Vote for Champions
           </p>
-          <p className="text-lg text-primary-foreground/80 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
             Six legendary clans compete for honor and leadership. Cast your vote for your clan's Panch representative 
             and shape the future of IIMBG's greatest tournament. One vote per clan, choose your champion wisely!
           </p>
@@ -62,7 +128,8 @@ const Landing = () => {
             <Link to="/clans">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-secondary to-accent text-primary font-bold hover:shadow-2xl hover:scale-105 transition-all text-lg px-10 py-7 rounded-xl"
+                className="text-white font-bold hover:shadow-2xl hover:scale-105 transition-all text-lg px-10 py-7 rounded-xl"
+                style={{ background: `linear-gradient(to right, ${branding.home_secondary_color}, ${branding.home_accent_color})` }}
               >
                 <Swords className="mr-2 h-6 w-6" />
                 Enter the Arena
@@ -73,24 +140,24 @@ const Landing = () => {
           {/* Stats Cards with Sport Theme */}
           <div className="grid md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
-              <Crown className="h-10 w-10 mx-auto mb-3 text-secondary group-hover:scale-110 transition-transform" />
-              <div className="text-secondary text-4xl font-black mb-2">6</div>
-              <div className="text-primary-foreground/90 font-semibold">Warrior Clans</div>
+              <Crown className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_secondary_color }} />
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>6</div>
+              <div className="text-white/90 font-semibold">Warrior Clans</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
-              <Users className="h-10 w-10 mx-auto mb-3 text-accent group-hover:scale-110 transition-transform" />
-              <div className="text-accent text-4xl font-black mb-2">4</div>
-              <div className="text-primary-foreground/90 font-semibold">Battle Groups</div>
+              <Users className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_accent_color }} />
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>4</div>
+              <div className="text-white/90 font-semibold">Battle Groups</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
-              <Trophy className="h-10 w-10 mx-auto mb-3 text-secondary group-hover:scale-110 transition-transform" />
-              <div className="text-secondary text-4xl font-black mb-2">24</div>
-              <div className="text-primary-foreground/90 font-semibold">Champions</div>
+              <Trophy className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_secondary_color }} />
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>24</div>
+              <div className="text-white/90 font-semibold">Champions</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
-              <Zap className="h-10 w-10 mx-auto mb-3 text-accent group-hover:scale-110 transition-transform" />
-              <div className="text-accent text-4xl font-black mb-2">1</div>
-              <div className="text-primary-foreground/90 font-semibold">Epic Battle</div>
+              <Zap className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_accent_color }} />
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>1</div>
+              <div className="text-white/90 font-semibold">Epic Battle</div>
             </Card>
           </div>
         </div>
@@ -224,17 +291,21 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="relative bg-primary py-12 border-t border-white/10">
+      <footer className="relative py-12 border-t border-white/10" style={{ backgroundColor: branding.home_primary_color }}>
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-secondary" />
-              <span className="text-xl font-bold text-primary-foreground">IIMBG COC</span>
+              {branding.website_logo ? (
+                <img src={branding.website_logo} alt="Logo" className="h-8 object-contain" />
+              ) : (
+                <Trophy className="h-8 w-8" style={{ color: branding.home_secondary_color }} />
+              )}
+              <span className="text-xl font-bold text-white">IIMBG COC</span>
             </div>
-            <p className="text-primary-foreground/80 text-sm max-w-md">
+            <p className="text-white/80 text-sm max-w-md">
               May the strongest clan prevail. Vote with honor, compete with pride.
             </p>
-            <p className="text-primary-foreground/60 text-xs">
+            <p className="text-white/60 text-xs">
               © 2025 IIMBG Clash of Clans Elections. All rights reserved.
             </p>
           </div>
