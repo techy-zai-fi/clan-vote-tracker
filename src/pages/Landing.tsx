@@ -14,6 +14,18 @@ const Landing = () => {
     home_accent_color: "#8B5CF6",
     home_bg_start: "#0F172A",
     home_bg_end: "#1E293B",
+    hero_title: "CLASH OF CLANS",
+    hero_subtitle: "Panch Elections 2025",
+    hero_description: "Six legendary clans compete for honor and leadership. Cast your vote for your clan's Panch representative and shape the future of IIMBG's greatest tournament. One vote per clan, choose your champion wisely!",
+    hero_cta_text: "Enter the Arena",
+    stats_label_1: "Warrior Clans",
+    stats_value_1: "6",
+    stats_label_2: "Battle Groups",
+    stats_value_2: "4",
+    stats_label_3: "Champions",
+    stats_value_3: "24",
+    stats_label_4: "Epic Battle",
+    stats_value_4: "1",
   });
 
   useEffect(() => {
@@ -33,6 +45,18 @@ const Landing = () => {
           home_accent_color: data.home_accent_color || "#8B5CF6",
           home_bg_start: data.home_bg_start || "#0F172A",
           home_bg_end: data.home_bg_end || "#1E293B",
+          hero_title: data.hero_title || "CLASH OF CLANS",
+          hero_subtitle: data.hero_subtitle || "Panch Elections 2025",
+          hero_description: data.hero_description || "Six legendary clans compete for honor and leadership. Cast your vote for your clan's Panch representative and shape the future of IIMBG's greatest tournament. One vote per clan, choose your champion wisely!",
+          hero_cta_text: data.hero_cta_text || "Enter the Arena",
+          stats_label_1: data.stats_label_1 || "Warrior Clans",
+          stats_value_1: data.stats_value_1 || "6",
+          stats_label_2: data.stats_label_2 || "Battle Groups",
+          stats_value_2: data.stats_value_2 || "4",
+          stats_label_3: data.stats_label_3 || "Champions",
+          stats_value_3: data.stats_value_3 || "24",
+          stats_label_4: data.stats_label_4 || "Epic Battle",
+          stats_value_4: data.stats_value_4 || "1",
         });
       }
     };
@@ -101,7 +125,7 @@ const Landing = () => {
 
           {/* Title */}
           <h1 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight">
-            CLASH OF CLANS
+            {branding.hero_title}
           </h1>
           <div 
             className="inline-block px-6 py-2 backdrop-blur-sm rounded-full border mb-6"
@@ -111,16 +135,12 @@ const Landing = () => {
             }}
           >
             <p className="text-2xl md:text-3xl font-bold" style={{ color: branding.home_secondary_color }}>
-              Panch Elections 2025
+              {branding.hero_subtitle}
             </p>
           </div>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-4 font-semibold">
-            Battle for Glory, Vote for Champions
-          </p>
           <p className="text-lg text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Six legendary clans compete for honor and leadership. Cast your vote for your clan's Panch representative 
-            and shape the future of IIMBG's greatest tournament. One vote per clan, choose your champion wisely!
+            {branding.hero_description}
           </p>
 
           {/* CTA Buttons */}
@@ -132,7 +152,7 @@ const Landing = () => {
                 style={{ background: `linear-gradient(to right, ${branding.home_secondary_color}, ${branding.home_accent_color})` }}
               >
                 <Swords className="mr-2 h-6 w-6" />
-                Enter the Arena
+                {branding.hero_cta_text}
               </Button>
             </Link>
           </div>
@@ -141,23 +161,23 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
               <Crown className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_secondary_color }} />
-              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>6</div>
-              <div className="text-white/90 font-semibold">Warrior Clans</div>
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>{branding.stats_value_1}</div>
+              <div className="text-white/90 font-semibold">{branding.stats_label_1}</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
               <Users className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_accent_color }} />
-              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>4</div>
-              <div className="text-white/90 font-semibold">Battle Groups</div>
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>{branding.stats_value_2}</div>
+              <div className="text-white/90 font-semibold">{branding.stats_label_2}</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
               <Trophy className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_secondary_color }} />
-              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>24</div>
-              <div className="text-white/90 font-semibold">Champions</div>
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_secondary_color }}>{branding.stats_value_3}</div>
+              <div className="text-white/90 font-semibold">{branding.stats_label_3}</div>
             </Card>
             <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover-lift group">
               <Zap className="h-10 w-10 mx-auto mb-3 group-hover:scale-110 transition-transform" style={{ color: branding.home_accent_color }} />
-              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>1</div>
-              <div className="text-white/90 font-semibold">Epic Battle</div>
+              <div className="text-4xl font-black mb-2" style={{ color: branding.home_accent_color }}>{branding.stats_value_4}</div>
+              <div className="text-white/90 font-semibold">{branding.stats_label_4}</div>
             </Card>
           </div>
         </div>

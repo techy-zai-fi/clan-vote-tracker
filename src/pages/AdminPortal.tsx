@@ -165,7 +165,7 @@ const AdminPortal = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
             <TabsTrigger value="dashboard" className="gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -197,10 +197,6 @@ const AdminPortal = () => {
             <TabsTrigger value="stats" className="gap-2">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Stats</span>
-            </TabsTrigger>
-            <TabsTrigger value="audit" className="gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Audit</span>
             </TabsTrigger>
           </TabsList>
 
@@ -234,13 +230,6 @@ const AdminPortal = () => {
 
           <TabsContent value="stats">
             <StatsView />
-          </TabsContent>
-
-          <TabsContent value="audit">
-            <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Audit Log</h2>
-              <p className="text-muted-foreground">Coming soon: View all system activity</p>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>
