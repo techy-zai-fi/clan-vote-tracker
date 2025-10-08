@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Image as ImageIcon, Palette } from "lucide-react";
@@ -16,6 +17,18 @@ const BrandingSettings = () => {
     home_accent_color: "#8B5CF6",
     home_bg_start: "#0F172A",
     home_bg_end: "#1E293B",
+    hero_title: "",
+    hero_subtitle: "",
+    hero_description: "",
+    hero_cta_text: "",
+    stats_label_1: "",
+    stats_value_1: "",
+    stats_label_2: "",
+    stats_value_2: "",
+    stats_label_3: "",
+    stats_value_3: "",
+    stats_label_4: "",
+    stats_value_4: "",
   });
   const { toast } = useToast();
 
@@ -39,6 +52,18 @@ const BrandingSettings = () => {
         home_accent_color: data.home_accent_color || "#8B5CF6",
         home_bg_start: data.home_bg_start || "#0F172A",
         home_bg_end: data.home_bg_end || "#1E293B",
+        hero_title: data.hero_title || "",
+        hero_subtitle: data.hero_subtitle || "",
+        hero_description: data.hero_description || "",
+        hero_cta_text: data.hero_cta_text || "",
+        stats_label_1: data.stats_label_1 || "",
+        stats_value_1: data.stats_value_1 || "",
+        stats_label_2: data.stats_label_2 || "",
+        stats_value_2: data.stats_value_2 || "",
+        stats_label_3: data.stats_label_3 || "",
+        stats_value_3: data.stats_value_3 || "",
+        stats_label_4: data.stats_label_4 || "",
+        stats_value_4: data.stats_value_4 || "",
       });
     }
   };
@@ -55,6 +80,18 @@ const BrandingSettings = () => {
           home_accent_color: settings.home_accent_color,
           home_bg_start: settings.home_bg_start,
           home_bg_end: settings.home_bg_end,
+          hero_title: settings.hero_title,
+          hero_subtitle: settings.hero_subtitle,
+          hero_description: settings.hero_description,
+          hero_cta_text: settings.hero_cta_text,
+          stats_label_1: settings.stats_label_1,
+          stats_value_1: settings.stats_value_1,
+          stats_label_2: settings.stats_label_2,
+          stats_value_2: settings.stats_value_2,
+          stats_label_3: settings.stats_label_3,
+          stats_value_3: settings.stats_value_3,
+          stats_label_4: settings.stats_label_4,
+          stats_value_4: settings.stats_value_4,
         })
         .eq('id', 1);
 
@@ -284,6 +321,130 @@ const BrandingSettings = () => {
         </div>
       </Card>
 
+      {/* Hero Section Settings */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Hero Section Content</h3>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="hero_title">Hero Title</Label>
+            <Input
+              id="hero_title"
+              value={settings.hero_title}
+              onChange={(e) => setSettings({ ...settings, hero_title: e.target.value })}
+              placeholder="IIMBG Clash of Clans Elections 2025"
+            />
+          </div>
+          <div>
+            <Label htmlFor="hero_subtitle">Hero Subtitle</Label>
+            <Input
+              id="hero_subtitle"
+              value={settings.hero_subtitle}
+              onChange={(e) => setSettings({ ...settings, hero_subtitle: e.target.value })}
+              placeholder="Choose Your Champions, Shape Your Clan's Destiny"
+            />
+          </div>
+          <div>
+            <Label htmlFor="hero_description">Hero Description</Label>
+            <Textarea
+              id="hero_description"
+              value={settings.hero_description}
+              onChange={(e) => setSettings({ ...settings, hero_description: e.target.value })}
+              placeholder="The ultimate battle for clan supremacy begins now..."
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+          <div>
+            <Label htmlFor="hero_cta_text">Call-to-Action Button Text</Label>
+            <Input
+              id="hero_cta_text"
+              value={settings.hero_cta_text}
+              onChange={(e) => setSettings({ ...settings, hero_cta_text: e.target.value })}
+              placeholder="Enter the Arena"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Statistics Section Settings */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Statistics Section</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="stats_label_1">Stat 1 Label</Label>
+            <Input
+              id="stats_label_1"
+              value={settings.stats_label_1}
+              onChange={(e) => setSettings({ ...settings, stats_label_1: e.target.value })}
+              placeholder="Active Warriors"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_value_1">Stat 1 Value</Label>
+            <Input
+              id="stats_value_1"
+              value={settings.stats_value_1}
+              onChange={(e) => setSettings({ ...settings, stats_value_1: e.target.value })}
+              placeholder="1000+"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_label_2">Stat 2 Label</Label>
+            <Input
+              id="stats_label_2"
+              value={settings.stats_label_2}
+              onChange={(e) => setSettings({ ...settings, stats_label_2: e.target.value })}
+              placeholder="Battle Clans"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_value_2">Stat 2 Value</Label>
+            <Input
+              id="stats_value_2"
+              value={settings.stats_value_2}
+              onChange={(e) => setSettings({ ...settings, stats_value_2: e.target.value })}
+              placeholder="6"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_label_3">Stat 3 Label</Label>
+            <Input
+              id="stats_label_3"
+              value={settings.stats_label_3}
+              onChange={(e) => setSettings({ ...settings, stats_label_3: e.target.value })}
+              placeholder="Epic Positions"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_value_3">Stat 3 Value</Label>
+            <Input
+              id="stats_value_3"
+              value={settings.stats_value_3}
+              onChange={(e) => setSettings({ ...settings, stats_value_3: e.target.value })}
+              placeholder="12"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_label_4">Stat 4 Label</Label>
+            <Input
+              id="stats_label_4"
+              value={settings.stats_label_4}
+              onChange={(e) => setSettings({ ...settings, stats_label_4: e.target.value })}
+              placeholder="Victory Points"
+            />
+          </div>
+          <div>
+            <Label htmlFor="stats_value_4">Stat 4 Value</Label>
+            <Input
+              id="stats_value_4"
+              value={settings.stats_value_4}
+              onChange={(e) => setSettings({ ...settings, stats_value_4: e.target.value })}
+              placeholder="∞"
+            />
+          </div>
+        </div>
+      </Card>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <Button onClick={handleSave} size="lg">
@@ -302,6 +463,8 @@ const BrandingSettings = () => {
           <li>• <strong>Colors:</strong> Use hex color codes (#RRGGBB format)</li>
           <li>• <strong>Contrast:</strong> Ensure text is readable on chosen backgrounds</li>
           <li>• <strong>Consistency:</strong> Choose colors that work well together</li>
+          <li>• <strong>Hero Text:</strong> Keep titles concise and impactful</li>
+          <li>• <strong>Statistics:</strong> Use clear, meaningful labels and values</li>
         </ul>
       </Card>
     </div>

@@ -146,6 +146,10 @@ export type Database = {
           coc_logo: string | null
           end_at: string | null
           frozen: boolean | null
+          hero_cta_text: string | null
+          hero_description: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
           home_accent_color: string | null
           home_bg_end: string | null
           home_bg_start: string | null
@@ -155,6 +159,14 @@ export type Database = {
           is_live: boolean | null
           show_live_stats: boolean | null
           start_at: string | null
+          stats_label_1: string | null
+          stats_label_2: string | null
+          stats_label_3: string | null
+          stats_label_4: string | null
+          stats_value_1: string | null
+          stats_value_2: string | null
+          stats_value_3: string | null
+          stats_value_4: string | null
           updated_at: string | null
           website_logo: string | null
         }
@@ -164,6 +176,10 @@ export type Database = {
           coc_logo?: string | null
           end_at?: string | null
           frozen?: boolean | null
+          hero_cta_text?: string | null
+          hero_description?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           home_accent_color?: string | null
           home_bg_end?: string | null
           home_bg_start?: string | null
@@ -173,6 +189,14 @@ export type Database = {
           is_live?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
+          stats_label_1?: string | null
+          stats_label_2?: string | null
+          stats_label_3?: string | null
+          stats_label_4?: string | null
+          stats_value_1?: string | null
+          stats_value_2?: string | null
+          stats_value_3?: string | null
+          stats_value_4?: string | null
           updated_at?: string | null
           website_logo?: string | null
         }
@@ -182,6 +206,10 @@ export type Database = {
           coc_logo?: string | null
           end_at?: string | null
           frozen?: boolean | null
+          hero_cta_text?: string | null
+          hero_description?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           home_accent_color?: string | null
           home_bg_end?: string | null
           home_bg_start?: string | null
@@ -191,6 +219,14 @@ export type Database = {
           is_live?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
+          stats_label_1?: string | null
+          stats_label_2?: string | null
+          stats_label_3?: string | null
+          stats_label_4?: string | null
+          stats_value_1?: string | null
+          stats_value_2?: string | null
+          stats_value_3?: string | null
+          stats_value_4?: string | null
           updated_at?: string | null
           website_logo?: string | null
         }
