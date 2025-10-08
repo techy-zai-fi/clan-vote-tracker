@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ImageUpload } from "./ImageUpload";
 
 const ClanManagement = () => {
   const [clans, setClans] = useState<any[]>([]);
@@ -243,29 +244,18 @@ const ClanManagement = () => {
               />
             </div>
 
-            <div>
-              <Label>Logo URL</Label>
-              <Input
-                value={formData.logo_url}
-                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                placeholder="https://example.com/logo.png"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Public URL to clan logo image (PNG, SVG, or JPG)
-              </p>
-            </div>
-
-            <div>
-              <Label>Background Image URL</Label>
-              <Input
-                value={formData.bg_image}
-                onChange={(e) => setFormData({ ...formData, bg_image: e.target.value })}
-                placeholder="https://example.com/background.jpg"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Public URL to clan background image for voting page
-              </p>
-            </div>
+            <ImageUpload
+              label="Logo"
+              value={formData.logo_url}
+              onChange={(url) => setFormData({...formData, logo_url: url})}
+              folder="logos"
+            />
+            <ImageUpload
+              label="Background Image"
+              value={formData.bg_image}
+              onChange={(url) => setFormData({...formData, bg_image: url})}
+              folder="backgrounds"
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <div>

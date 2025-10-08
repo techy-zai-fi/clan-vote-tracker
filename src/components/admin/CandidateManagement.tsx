@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit2, Trash2, Upload, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { ImageUpload } from "./ImageUpload";
 
 const CandidateManagement = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -350,15 +351,12 @@ const CandidateManagement = () => {
               </div>
             </div>
 
-            <div>
-              <Label>Photo URL</Label>
-              <Input
-                type="url"
-                placeholder="https://..."
-                value={formData.photo_url}
-                onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-              />
-            </div>
+            <ImageUpload
+              label="Photo"
+              value={formData.photo_url}
+              onChange={(url) => setFormData({...formData, photo_url: url})}
+              folder="candidates"
+            />
 
             <div>
               <Label>Manifesto</Label>

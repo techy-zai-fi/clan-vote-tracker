@@ -172,16 +172,15 @@ const ClanVoting = () => {
     }
   };
 
-  const getClanGradient = () => {
-    const gradients: Record<string, string> = {
-      MM: 'from-blue-600 to-blue-700',
-      SS: 'from-gray-600 to-gray-700',
-      WW: 'from-sky-600 to-sky-700',
-      YY: 'from-yellow-600 to-yellow-700',
-      AA: 'from-amber-600 to-amber-700',
-      NN: 'from-indigo-600 to-indigo-700',
+  const getClanStyle = () => {
+    if (!clan?.main_color || !clan?.sub_color) {
+      return {
+        background: `linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))`,
+      };
+    }
+    return {
+      background: `linear-gradient(135deg, ${clan.main_color}, ${clan.sub_color})`,
     };
-    return gradients[clanId || ''] || 'from-primary to-accent';
   };
 
   if (!voter || !clan) return null;
@@ -189,7 +188,10 @@ const ClanVoting = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Clan-themed header */}
-      <div className={`bg-gradient-to-br ${getClanGradient()} py-16 relative`}>
+      <div 
+        className="py-16 relative"
+        style={{ background: getClanStyle().background }}
+      >
         <div className="absolute inset-0 bg-black/20" />
         <div className="container mx-auto px-4 relative z-10">
           <Link to={`/clans/${clanId}`}>
@@ -199,6 +201,9 @@ const ClanVoting = () => {
             </Button>
           </Link>
           <div className="text-center text-white">
+            {clan.logo_url && (
+              <img src={clan.logo_url} alt={clan.name} className="h-16 w-16 mx-auto mb-4 object-contain drop-shadow-2xl" />
+            )}
             <div className="text-7xl font-bold mb-2">{clan.id}</div>
             <h1 className="text-4xl font-bold mb-2">{clan.name}</h1>
             <p className="text-xl italic">"{clan.quote}"</p>
@@ -280,7 +285,8 @@ const ClanVoting = () => {
                 <Button 
                   onClick={handleSubmit}
                   disabled={!selectedCandidate || isSubmitting || (existingVote && !settings?.allow_vote_changes)}
-                  className={`flex-1 bg-gradient-to-r ${getClanGradient()}`}
+                  className="flex-1 text-white"
+                  style={{ background: getClanStyle().background }}
                 >
                   {isSubmitting ? "Submitting..." : existingVote ? "Update Vote" : "Cast Vote"}
                 </Button>

@@ -20,16 +20,15 @@ const ClansOverview = () => {
     if (data) setClans(data);
   };
 
-  const getClanGradient = (clanId: string) => {
-    const gradients: Record<string, string> = {
-      MM: 'from-blue-600 to-blue-700',
-      SS: 'from-gray-600 to-gray-700',
-      WW: 'from-sky-600 to-sky-700',
-      YY: 'from-yellow-600 to-yellow-700',
-      AA: 'from-amber-600 to-amber-700',
-      NN: 'from-indigo-600 to-indigo-700',
+  const getClanStyle = (clan: any) => {
+    if (!clan?.main_color || !clan?.sub_color) {
+      return {
+        background: `linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))`,
+      };
+    }
+    return {
+      background: `linear-gradient(135deg, ${clan.main_color}, ${clan.sub_color})`,
     };
-    return gradients[clanId] || 'from-primary to-accent';
   };
 
   return (
@@ -60,13 +59,20 @@ const ClansOverview = () => {
           {clans.map((clan) => (
             <Link key={clan.id} to={`/clans/${clan.id}`}>
               <Card className="overflow-hidden hover-lift cursor-pointer group border-2">
-                <div className={`h-56 bg-gradient-to-br ${getClanGradient(clan.id)} flex items-center justify-center relative overflow-hidden`}>
+                <div 
+                  className="h-56 flex items-center justify-center relative overflow-hidden"
+                  style={{ background: getClanStyle(clan).background }}
+                >
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-500" />
                   <div className="absolute inset-0">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   </div>
                   <div className="relative z-10 text-center text-white transform group-hover:scale-110 transition-transform duration-500">
-                    <Trophy className="h-12 w-12 mx-auto mb-4 text-secondary drop-shadow-lg" />
+                    {clan.logo_url ? (
+                      <img src={clan.logo_url} alt={clan.name} className="h-16 w-16 mx-auto mb-4 object-contain drop-shadow-2xl" />
+                    ) : (
+                      <Trophy className="h-12 w-12 mx-auto mb-4 text-secondary drop-shadow-lg" />
+                    )}
                     <div className="text-7xl font-black mb-2 drop-shadow-2xl">{clan.id}</div>
                     <div className="text-3xl font-bold drop-shadow-md">{clan.name}</div>
                   </div>

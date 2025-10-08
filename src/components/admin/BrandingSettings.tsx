@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Image as ImageIcon, Palette } from "lucide-react";
+import { ImageUpload } from "./ImageUpload";
 
 const BrandingSettings = () => {
   const [settings, setSettings] = useState({
@@ -131,53 +132,18 @@ const BrandingSettings = () => {
         </div>
 
         <div className="space-y-4">
-          <div>
-            <Label>Website Logo URL</Label>
-            <Input
-              value={settings.website_logo}
-              onChange={(e) => setSettings({ ...settings, website_logo: e.target.value })}
-              placeholder="https://example.com/logo.png"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Main website logo displayed in header
-            </p>
-            {settings.website_logo && (
-              <div className="mt-2 p-4 bg-muted rounded-lg">
-                <img 
-                  src={settings.website_logo} 
-                  alt="Website logo preview"
-                  className="h-16 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div>
-            <Label>Clash of Clans Logo URL</Label>
-            <Input
-              value={settings.coc_logo}
-              onChange={(e) => setSettings({ ...settings, coc_logo: e.target.value })}
-              placeholder="https://example.com/coc-logo.png"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Clash of Clans logo displayed on home page
-            </p>
-            {settings.coc_logo && (
-              <div className="mt-2 p-4 bg-muted rounded-lg">
-                <img 
-                  src={settings.coc_logo} 
-                  alt="CoC logo preview"
-                  className="h-16 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          <ImageUpload
+            label="Website Logo"
+            value={settings.website_logo}
+            onChange={(url) => setSettings({...settings, website_logo: url})}
+            folder="branding"
+          />
+          <ImageUpload
+            label="Clash of Clans Logo"
+            value={settings.coc_logo}
+            onChange={(url) => setSettings({...settings, coc_logo: url})}
+            folder="branding"
+          />
         </div>
       </Card>
 
