@@ -64,6 +64,27 @@ const Auth = () => {
     }
   }, [toast]);
 
+  // Handle token handoff for local development: set session from tokens in URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && (hash.includes('access_token=') || hash.includes('refresh_token='))) {
+      const params = new URLSearchParams(hash.replace(/^#/, ''));
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      if (access_token && refresh_token) {
+        supabase.auth
+          .setSession({ access_token, refresh_token })
+          .catch(() => console.error('Failed to set session from tokens'))
+          .finally(() => {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+          });
+        return;
+      }
+      // Clean even if incomplete
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
+
   const checkUserRole = async (userId: string) => {
     console.log('Checking user role for:', userId);
     const { data: roles, error } = await supabase
@@ -75,15 +96,36 @@ const Auth = () => {
     
     if (roles && roles.some(r => r.role === 'admin')) {
       console.log('User is admin, redirecting to /admin');
-      
+
       // Check if we need to redirect to a different origin
       const storedOrigin = localStorage.getItem('oauth_origin');
       if (storedOrigin && storedOrigin !== window.location.origin) {
-        console.log('Redirecting to stored origin:', storedOrigin);
-        window.location.href = `${storedOrigin}/admin`;
-        return;
+        try {
+          if (storedOrigin.startsWith('http://localhost')) {
+            const { data } = await supabase.auth.getSession();
+            const at = data.session?.access_token ?? session?.access_token ?? undefined;
+            const rt = data.session?.refresh_token ?? session?.refresh_token ?? undefined;
+            localStorage.removeItem('oauth_origin');
+            if (at && rt) {
+              const target = `${storedOrigin}/auth#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}`;
+              window.location.href = target;
+              return;
+            }
+            // Fallback: bounce to local /auth without tokens
+            window.location.href = `${storedOrigin}/auth`;
+            return;
+          } else {
+            localStorage.removeItem('oauth_origin');
+            window.location.href = `${storedOrigin}/admin`;
+            return;
+          }
+        } catch {
+          localStorage.removeItem('oauth_origin');
+          window.location.href = `${storedOrigin}/admin`;
+          return;
+        }
       }
-      
+
       localStorage.removeItem('oauth_origin');
       navigate('/admin');
     } else {
