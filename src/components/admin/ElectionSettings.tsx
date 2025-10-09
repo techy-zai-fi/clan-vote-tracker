@@ -139,6 +139,17 @@ const ElectionSettings = () => {
               onCheckedChange={(checked) => setSettings({ ...settings, frozen: checked })}
             />
           </div>
+
+          <div className="flex items-center justify-between p-4 border rounded-lg bg-primary/10">
+            <div>
+              <Label className="text-base font-semibold">Publish Results</Label>
+              <p className="text-sm text-muted-foreground">Make election results visible to everyone</p>
+            </div>
+            <Switch
+              checked={settings.publish_results}
+              onCheckedChange={(checked) => setSettings({ ...settings, publish_results: checked })}
+            />
+          </div>
         </div>
 
         <Button onClick={handleSave} disabled={isLoading} className="w-full">

@@ -1,141 +1,124 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Session, User } from "@supabase/supabase-js";
 import { 
-  LayoutDashboard, 
-  Users, 
-  UserCheck, 
-  Layers, 
   Settings, 
+  Users, 
+  Trophy, 
+  Shield, 
   BarChart3, 
-  Download,
+  LogOut,
+  Palette,
   FileText,
-  Lock,
-  Palette
+  LayoutDashboard,
+  Mail,
+  UserCheck,
+  Layers
 } from "lucide-react";
 import AdminDashboard from "@/components/admin/AdminDashboard";
+import BrandingSettings from "@/components/admin/BrandingSettings";
 import VoterManagement from "@/components/admin/VoterManagement";
 import CandidateManagement from "@/components/admin/CandidateManagement";
 import ClanManagement from "@/components/admin/ClanManagement";
+import VotingRules from "@/components/admin/VotingRules";
 import ElectionSettings from "@/components/admin/ElectionSettings";
 import StatsView from "@/components/admin/StatsView";
-import VotingRules from "@/components/admin/VotingRules";
-import BrandingSettings from "@/components/admin/BrandingSettings";
+import AdminEmailManagement from "@/components/admin/AdminEmailManagement";
 
 const AdminPortal = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if already authenticated in session
-    const adminAuth = sessionStorage.getItem('admin_authenticated');
-    if (adminAuth === 'true') {
-      setIsAuthenticated(true);
-    }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session) {
+          setTimeout(() => {
+            checkUserRole(session.user.id);
+          }, 0);
+        } else {
+          setIsAdmin(false);
+          setLoading(false);
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session) {
+        checkUserRole(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
+  const checkUserRole = async (userId: string) => {
     try {
-      // For offline mode, we'll use a simple hardcoded check
-      // In production, this should verify against admin_credentials table with bcrypt
-      // Default password is "admin123"
-      if (password === "admin123") {
-        sessionStorage.setItem('admin_authenticated', 'true');
-        setIsAuthenticated(true);
-        
-        // Log access
-        await supabase.from('audit_log').insert({
-          actor_label: 'admin',
-          action: 'ADMIN_LOGIN',
-          payload_json: { timestamp: new Date().toISOString() },
-        });
-
-        toast({
-          title: "Access granted",
-          description: "Welcome to the admin portal",
-        });
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      
+      if (roles && roles.some(r => r.role === 'admin')) {
+        setIsAdmin(true);
       } else {
+        setIsAdmin(false);
         toast({
-          title: "Access denied",
-          description: "Incorrect password",
+          title: "Access Denied",
+          description: "You are not authorized to access the admin portal.",
           variant: "destructive",
         });
+        navigate('/auth');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to authenticate",
-        variant: "destructive",
-      });
+      console.error('Error checking user role:', error);
+      setIsAdmin(false);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('admin_authenticated');
-    setIsAuthenticated(false);
-    setPassword("");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+    toast({
+      title: "Logged out",
+      description: "You have been logged out of the admin portal",
+    });
   };
 
-  if (!isAuthenticated) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 bg-white/95 backdrop-blur-sm">
-          <div className="text-center mb-8">
-            <div className="inline-block p-3 bg-primary rounded-full mb-4">
-              <Lock className="h-10 w-10 text-primary-foreground" />
-            </div>
-            <h1 className="text-3xl font-bold mb-2">Admin Portal</h1>
-            <p className="text-muted-foreground">Enter password to access</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter admin password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Default password: admin123
-              </p>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? "Authenticating..." : "Access Admin Portal"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link to="/" className="text-sm text-primary hover:underline">
-              ← Back to Home
-            </Link>
-          </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="p-8">
+          <p className="text-muted-foreground">Loading...</p>
         </Card>
       </div>
     );
+  }
+
+  if (!user || !isAdmin) {
+    navigate('/auth');
+    return null;
   }
 
   return (
@@ -146,57 +129,55 @@ const AdminPortal = () => {
             <h1 className="text-2xl font-bold">Admin Portal</h1>
             <p className="text-sm text-primary-foreground/80">IIMBG Elections Management</p>
           </div>
-          <div className="flex gap-3">
-            <Link to="/">
-              <Button variant="ghost" className="text-primary-foreground hover:bg-white/10">
-                View Public Site
-              </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10"
-            >
-              Logout
-            </Button>
-          </div>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="dashboard" className="gap-2">
+          <TabsList className="grid w-full grid-cols-9 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
+              Dashboard
             </TabsTrigger>
-            <TabsTrigger value="branding" className="gap-2">
+            <TabsTrigger value="branding" className="flex items-center gap-2">
               <Palette className="h-4 w-4" />
-              <span className="hidden sm:inline">Branding</span>
+              Branding
             </TabsTrigger>
-            <TabsTrigger value="voters" className="gap-2">
+            <TabsTrigger value="voters" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Voters</span>
+              Voters
             </TabsTrigger>
-            <TabsTrigger value="candidates" className="gap-2">
+            <TabsTrigger value="candidates" className="flex items-center gap-2">
               <UserCheck className="h-4 w-4" />
-              <span className="hidden sm:inline">Candidates</span>
+              Candidates
             </TabsTrigger>
-            <TabsTrigger value="clans" className="gap-2">
+            <TabsTrigger value="clans" className="flex items-center gap-2">
               <Layers className="h-4 w-4" />
-              <span className="hidden sm:inline">Clans</span>
+              Clans
             </TabsTrigger>
-            <TabsTrigger value="rules" className="gap-2">
+            <TabsTrigger value="rules" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Rules
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Rules</span>
+              Settings
             </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-            <TabsTrigger value="stats" className="gap-2">
+            <TabsTrigger value="stats" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Stats</span>
+              Stats
+            </TabsTrigger>
+            <TabsTrigger value="admins" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              Admins
             </TabsTrigger>
           </TabsList>
 
@@ -230,6 +211,10 @@ const AdminPortal = () => {
 
           <TabsContent value="stats">
             <StatsView />
+          </TabsContent>
+
+          <TabsContent value="admins">
+            <AdminEmailManagement />
           </TabsContent>
         </Tabs>
       </div>

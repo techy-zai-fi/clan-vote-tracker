@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, CheckCircle } from "lucide-react";
+import { Session, User } from "@supabase/supabase-js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,32 +32,82 @@ const ClanVoting = () => {
   const [settings, setSettings] = useState<any>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const voterData = sessionStorage.getItem('voter');
-    if (!voterData) {
-      navigate('/voters');
-      return;
-    }
-    const parsedVoter = JSON.parse(voterData);
-    
-    // Enforce same-clan-only voting
-    if (parsedVoter.clan !== clanId) {
-      toast({
-        title: "Access Denied",
-        description: "You can only vote in your own clan. Redirecting...",
-        variant: "destructive",
-      });
-      setTimeout(() => navigate(`/vote/${parsedVoter.clan}`), 2000);
-      return;
-    }
-    
-    setVoter(parsedVoter);
-    loadData();
-  }, [clanId, navigate, toast]);
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session) {
+          setTimeout(() => {
+            checkAuthAndLoadData(session.user);
+          }, 0);
+        } else {
+          navigate('/auth');
+        }
+      }
+    );
 
-  const loadData = async () => {
-    const voterData = JSON.parse(sessionStorage.getItem('voter') || '{}');
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session) {
+        checkAuthAndLoadData(session.user);
+      } else {
+        navigate('/auth');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [clanId, navigate]);
+
+  const checkAuthAndLoadData = async (user: User) => {
+    try {
+      // Get voter info from registry
+      const { data: voterData } = await supabase
+        .from('voter_registry')
+        .select('*')
+        .eq('email', user.email)
+        .single();
+
+      if (!voterData) {
+        toast({
+          title: "Not Registered",
+          description: "You are not registered as a voter",
+          variant: "destructive",
+        });
+        navigate('/');
+        return;
+      }
+
+      // Enforce same-clan-only voting
+      if (voterData.clan !== clanId) {
+        toast({
+          title: "Access Denied",
+          description: "You can only vote in your own clan. Redirecting...",
+          variant: "destructive",
+        });
+        setTimeout(() => navigate(`/vote/${voterData.clan}`), 2000);
+        return;
+      }
+      
+      setVoter(voterData);
+      await loadData(voterData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error checking auth:', error);
+      navigate('/auth');
+    }
+  };
+
+  const loadData = async (voterData: any) => {
     
     // Load clan
     const { data: clanData } = await supabase
@@ -182,6 +233,16 @@ const ClanVoting = () => {
       background: `linear-gradient(135deg, ${clan.main_color}, ${clan.sub_color})`,
     };
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="p-8">
+          <p className="text-muted-foreground">Loading voting page...</p>
+        </Card>
+      </div>
+    );
+  }
 
   if (!voter || !clan) return null;
 

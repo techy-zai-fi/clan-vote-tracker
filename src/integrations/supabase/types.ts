@@ -32,6 +32,27 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_emails: {
+        Row: {
+          added_by: string | null
+          created_at: string | null
+          email: string
+          id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -157,6 +178,7 @@ export type Database = {
           home_secondary_color: string | null
           id: number
           is_live: boolean | null
+          publish_results: boolean | null
           show_live_stats: boolean | null
           start_at: string | null
           stats_label_1: string | null
@@ -187,6 +209,7 @@ export type Database = {
           home_secondary_color?: string | null
           id?: number
           is_live?: boolean | null
+          publish_results?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
           stats_label_1?: string | null
@@ -217,6 +240,7 @@ export type Database = {
           home_secondary_color?: string | null
           id?: number
           is_live?: boolean | null
+          publish_results?: boolean | null
           show_live_stats?: boolean | null
           start_at?: string | null
           stats_label_1?: string | null
@@ -229,6 +253,51 @@ export type Database = {
           stats_value_4?: string | null
           updated_at?: string | null
           website_logo?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -360,9 +429,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "admin" | "user"
       batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD" | "SEP"
       gender_type: "Male" | "Female" | "Other" | "Prefer not to say"
     }
@@ -492,6 +568,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "user"],
       batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD", "SEP"],
       gender_type: ["Male", "Female", "Other", "Prefer not to say"],
     },

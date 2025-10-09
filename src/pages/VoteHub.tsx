@@ -1,76 +1,77 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle2, Circle } from "lucide-react";
+import { Shield } from "lucide-react";
+import { Session, User } from "@supabase/supabase-js";
 
 const VoteHub = () => {
-  const [clans, setClans] = useState<any[]>([]);
-  const [votes, setVotes] = useState<any[]>([]);
-  const [voter, setVoter] = useState<any>(null);
   const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if voter session exists
-    const voterData = sessionStorage.getItem('voter');
-    if (!voterData) {
-      navigate('/voters');
-      return;
-    }
-    
-    const parsedVoter = JSON.parse(voterData);
-    setVoter(parsedVoter);
-    
-    // Auto-redirect to voter's clan since voting is clan-only
-    if (parsedVoter?.clan) {
-      setTimeout(() => {
-        navigate(`/vote/${parsedVoter.clan}`);
-      }, 100);
-    }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session) {
+          setTimeout(() => {
+            checkUserAndRedirect(session.user);
+          }, 0);
+        } else {
+          setLoading(false);
+          navigate('/auth');
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session) {
+        checkUserAndRedirect(session.user);
+      } else {
+        setLoading(false);
+        navigate('/auth');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const loadData = async () => {
-    const voterData = JSON.parse(sessionStorage.getItem('voter') || '{}');
-    
-    // Load clans
-    const { data: clansData } = await supabase
-      .from('clans')
-      .select('*')
-      .order('display_order');
-    
-    if (clansData) setClans(clansData);
+  const checkUserAndRedirect = async (user: User) => {
+    try {
+      // Get user's clan from voter registry
+      const { data: voterData } = await supabase
+        .from('voter_registry')
+        .select('*')
+        .eq('email', user.email)
+        .single();
 
-    // Load existing votes for this voter
-    const { data: votesData } = await supabase
-      .from('votes')
-      .select('*')
-      .eq('voter_email', voterData.email);
-    
-    if (votesData) setVotes(votesData);
+      if (voterData?.clan) {
+        // Redirect to their clan voting page
+        navigate(`/vote/${voterData.clan}`);
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+      setLoading(false);
+    }
   };
 
-  const hasVotedInClan = (clanId: string) => {
-    return votes.some(v => v.clan_id === clanId);
-  };
-
-  const getClanGradient = (clanId: string) => {
-    const gradients: Record<string, string> = {
-      MM: 'from-blue-600 to-blue-700',
-      SS: 'from-gray-600 to-gray-700',
-      WW: 'from-sky-600 to-sky-700',
-      YY: 'from-yellow-600 to-yellow-700',
-      AA: 'from-amber-600 to-amber-700',
-      NN: 'from-indigo-600 to-indigo-700',
-    };
-    return gradients[clanId] || 'from-primary to-accent';
-  };
-
-  if (!voter) {
+  if (loading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-muted-foreground">Redirecting to your clan voting page...</p>
+          <Shield className="h-12 w-12 mx-auto mb-4 text-primary animate-pulse" />
+          <p className="text-muted-foreground">Loading...</p>
         </Card>
       </div>
     );
@@ -81,7 +82,7 @@ const VoteHub = () => {
       <Card className="p-8 text-center max-w-md">
         <h2 className="text-2xl font-bold mb-4">Redirecting...</h2>
         <p className="text-muted-foreground">
-          Taking you to {voter.clan} clan voting page.
+          Taking you to your clan voting page.
         </p>
       </Card>
     </div>

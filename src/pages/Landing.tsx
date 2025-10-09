@@ -91,12 +91,20 @@ const Landing = () => {
             )}
             <h1 className="text-xl font-bold text-white">IIMBG COC Elections</h1>
           </div>
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
-              <Shield className="mr-2 h-4 w-4" />
-              Admin
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link to="/results">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                <Trophy className="mr-2 h-4 w-4" />
+                Results
+              </Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                <Shield className="mr-2 h-4 w-4" />
+                Admin
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
