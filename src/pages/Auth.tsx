@@ -18,6 +18,7 @@ const Auth = () => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -32,6 +33,7 @@ const Auth = () => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -44,14 +46,19 @@ const Auth = () => {
   }, []);
 
   const checkUserRole = async (userId: string) => {
-    const { data: roles } = await supabase
+    console.log('Checking user role for:', userId);
+    const { data: roles, error } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', userId);
     
+    console.log('User roles:', roles, 'Error:', error);
+    
     if (roles && roles.some(r => r.role === 'admin')) {
+      console.log('User is admin, redirecting to /admin');
       navigate('/admin');
     } else {
+      console.log('User is not admin');
       toast({
         title: "Access Denied",
         description: "You are not authorized to access the admin portal.",
