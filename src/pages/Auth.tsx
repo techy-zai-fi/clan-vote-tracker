@@ -21,6 +21,7 @@ const Auth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -151,7 +152,7 @@ const Auth = () => {
     }
   };
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     
@@ -169,16 +170,28 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: result.data.email,
-        password: result.data.password,
-      });
-
-      if (error) throw error;
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email: result.data.email,
+          password: result.data.password,
+        });
+        if (error) throw error;
+        
+        toast({
+          title: "Account created",
+          description: "Please check your email to verify your account.",
+        });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: result.data.email,
+          password: result.data.password,
+        });
+        if (error) throw error;
+      }
     } catch (error: any) {
-      console.error('Sign in error:', error);
+      console.error('Auth error:', error);
       toast({
-        title: "Sign in failed",
+        title: isSignUp ? "Sign up failed" : "Sign in failed",
         description: error.message || "Invalid email or password",
         variant: "destructive",
       });
@@ -208,11 +221,11 @@ const Auth = () => {
           <Shield className="h-16 w-16 mx-auto mb-4 text-primary" />
           <h1 className="text-3xl font-bold mb-2">Admin Portal</h1>
           <p className="text-muted-foreground">
-            Sign in with your authorized email to access the admin dashboard
+            {isSignUp ? "Create an admin account" : "Sign in to access the admin dashboard"}
           </p>
         </div>
 
-        <form onSubmit={handleSignIn} className="space-y-4">
+        <form onSubmit={handleAuth} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -249,9 +262,20 @@ const Auth = () => {
             className="w-full"
             size="lg"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? (isSignUp ? "Creating account..." : "Signing in...") : (isSignUp ? "Sign Up" : "Sign In")}
           </Button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-sm text-primary hover:underline"
+            disabled={loading}
+          >
+            {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+          </button>
+        </div>
 
         <p className="text-xs text-center text-muted-foreground mt-6">
           Only authorized admin emails can access this portal
