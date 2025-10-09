@@ -3,9 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Shield, LogIn } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session, User } from "@supabase/supabase-js";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -13,6 +21,9 @@ const Auth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -140,21 +151,27 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    
+    // Validate input
+    const result = authSchema.safeParse({ email, password });
+    if (!result.success) {
+      const fieldErrors: { email?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "email") fieldErrors.email = err.message;
+        if (err.path[0] === "password") fieldErrors.password = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setLoading(true);
     try {
-      // Store the current origin to redirect back after OAuth
-      localStorage.setItem('oauth_origin', window.location.origin);
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          }
-        }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: result.data.email,
+        password: result.data.password,
       });
 
       if (error) throw error;
@@ -162,7 +179,7 @@ const Auth = () => {
       console.error('Sign in error:', error);
       toast({
         title: "Sign in failed",
-        description: error.message || "Failed to sign in with Google",
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } finally {
@@ -195,15 +212,46 @@ const Auth = () => {
           </p>
         </div>
 
-        <Button
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="w-full"
-          size="lg"
-        >
-          <LogIn className="mr-2 h-5 w-5" />
-          {loading ? "Signing in..." : "Sign in with Google"}
-        </Button>
+        <form onSubmit={handleSignIn} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </Button>
+        </form>
 
         <p className="text-xs text-center text-muted-foreground mt-6">
           Only authorized admin emails can access this portal
