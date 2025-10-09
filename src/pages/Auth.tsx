@@ -45,6 +45,25 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Surface OAuth errors returned in the URL hash
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('error=')) {
+      const params = new URLSearchParams(hash.replace(/^#/, ''));
+      const error = params.get('error');
+      const code = params.get('error_code');
+      const desc = params.get('error_description');
+      console.error('OAuth error:', { error, code, desc });
+      toast({
+        title: 'Sign in failed',
+        description: desc ? decodeURIComponent(desc) : 'Authentication failed. Please try again.',
+        variant: 'destructive',
+      });
+      // Clean the URL hash to avoid repeated toasts
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [toast]);
+
   const checkUserRole = async (userId: string) => {
     console.log('Checking user role for:', userId);
     const { data: roles, error } = await supabase
