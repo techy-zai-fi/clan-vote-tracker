@@ -93,7 +93,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth`,
+          redirectTo: 'https://clan-vote-tracker.lovable.app/auth',
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
