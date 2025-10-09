@@ -75,9 +75,20 @@ const Auth = () => {
     
     if (roles && roles.some(r => r.role === 'admin')) {
       console.log('User is admin, redirecting to /admin');
+      
+      // Check if we need to redirect to a different origin
+      const storedOrigin = localStorage.getItem('oauth_origin');
+      if (storedOrigin && storedOrigin !== window.location.origin) {
+        console.log('Redirecting to stored origin:', storedOrigin);
+        window.location.href = `${storedOrigin}/admin`;
+        return;
+      }
+      
+      localStorage.removeItem('oauth_origin');
       navigate('/admin');
     } else {
       console.log('User is not admin');
+      localStorage.removeItem('oauth_origin');
       toast({
         title: "Access Denied",
         description: "You are not authorized to access the admin portal.",
@@ -90,6 +101,9 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
+      // Store the current origin to redirect back after OAuth
+      localStorage.setItem('oauth_origin', window.location.origin);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
