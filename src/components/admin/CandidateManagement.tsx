@@ -18,6 +18,8 @@ const CandidateManagement = () => {
   const [filteredCandidates, setFilteredCandidates] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showBulkImportDialog, setShowBulkImportDialog] = useState(false);
+  const [bulkRegNums, setBulkRegNums] = useState("");
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
   const [clans, setClans] = useState<Array<{ id: string; name: string }>>([]);
   const [batches, setBatches] = useState<string[]>([]);
@@ -175,6 +177,77 @@ const CandidateManagement = () => {
     }
   };
 
+  const handleBulkImport = async () => {
+    try {
+      const regNums = bulkRegNums
+        .split(',')
+        .map(num => num.trim())
+        .filter(num => num.length > 0);
+
+      if (regNums.length === 0) {
+        toast({
+          title: "Error",
+          description: "Please enter at least one registration number",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data: voters, error } = await supabase
+        .from('voter_registry')
+        .select('*')
+        .in('reg_num', regNums);
+
+      if (error) throw error;
+
+      if (!voters || voters.length === 0) {
+        toast({
+          title: "Error",
+          description: "No voters found with the provided registration numbers",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const candidateData = voters.map(voter => ({
+        name: voter.name,
+        email: voter.email,
+        clan_id: voter.clan,
+        gender: voter.gender,
+        batch: voter.batch,
+        year: voter.year,
+        is_active: true,
+      }));
+
+      const { error: insertError } = await supabase
+        .from('candidates')
+        .insert(candidateData);
+
+      if (insertError) throw insertError;
+
+      await supabase.from('audit_log').insert({
+        actor_label: 'admin',
+        action: 'BULK_IMPORT_CANDIDATES',
+        payload_json: { count: voters.length, reg_nums: regNums },
+      });
+
+      toast({
+        title: "Success",
+        description: `${voters.length} candidate(s) imported successfully`,
+      });
+
+      setShowBulkImportDialog(false);
+      setBulkRegNums("");
+      loadCandidates();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -182,10 +255,16 @@ const CandidateManagement = () => {
           <h2 className="text-2xl font-bold">Candidate Management</h2>
           <p className="text-muted-foreground">{candidates.length} candidates registered</p>
         </div>
-        <Button onClick={() => setShowAddDialog(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Candidate
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowBulkImportDialog(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Bulk Import
+          </Button>
+          <Button onClick={() => setShowAddDialog(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Candidate
+          </Button>
+        </div>
       </div>
 
       <Card className="p-6">
@@ -375,6 +454,41 @@ const CandidateManagement = () => {
             </Button>
             <Button onClick={handleSaveCandidate}>
               {editingCandidate ? "Update" : "Add"} Candidate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showBulkImportDialog} onOpenChange={setShowBulkImportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Import Candidates</DialogTitle>
+            <DialogDescription>
+              Enter registration numbers separated by commas to import candidates from the voter registry
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Registration Numbers</Label>
+              <Textarea
+                rows={6}
+                placeholder="e.g., 2027001, 2027002, 2027003"
+                value={bulkRegNums}
+                onChange={(e) => setBulkRegNums(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Separate multiple registration numbers with commas
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBulkImportDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleBulkImport}>
+              Import Candidates
             </Button>
           </DialogFooter>
         </DialogContent>
