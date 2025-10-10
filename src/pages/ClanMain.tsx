@@ -88,9 +88,13 @@ const ClanMain = () => {
 
   return (
     <div 
-      className="min-h-screen relative bg-cover bg-center bg-fixed"
+      className="min-h-screen relative"
       style={clan.bg_image ? {
         backgroundImage: `url(${clan.bg_image})`,
+        backgroundSize: '100% auto',
+        backgroundPosition: 'top center',
+        backgroundRepeat: 'repeat-y',
+        backgroundAttachment: 'scroll'
       } : undefined}
     >
       {clan.bg_image && (
