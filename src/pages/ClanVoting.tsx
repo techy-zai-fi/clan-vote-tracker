@@ -127,15 +127,56 @@ const ClanVoting = () => {
     
     if (settingsData) setSettings(settingsData);
 
-    // Load candidates for voter's batch
-    const { data: candidatesData } = await supabase
-      .from('candidates')
+    // Load voting rules to determine which candidates the voter can vote for
+    const { data: rulesData } = await supabase
+      .from('voting_rules')
       .select('*')
-      .eq('clan_id', clanId)
-      .eq('batch', voterData.batch)
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .or(`voter_batch.eq.${voterData.batch},voter_batch.eq.All`);
+
+    let candidatesData = [];
     
-    if (candidatesData) setCandidates(candidatesData);
+    if (rulesData && rulesData.length > 0) {
+      // Find applicable rule
+      const applicableRule = rulesData.find(rule => 
+        (rule.voter_batch === voterData.batch || rule.voter_batch === 'All') &&
+        (!rule.voter_section || rule.voter_section === String(voterData.year))
+      );
+
+      if (applicableRule) {
+        // Build query based on rule
+        let query = supabase
+          .from('candidates')
+          .select('*')
+          .eq('clan_id', clanId)
+          .eq('is_active', true);
+
+        // Apply batch filter
+        if (applicableRule.can_vote_for_batch !== 'All') {
+          query = query.eq('batch', applicableRule.can_vote_for_batch);
+        }
+
+        // Apply section filter if specified
+        if (applicableRule.can_vote_for_section) {
+          query = query.eq('year', parseInt(applicableRule.can_vote_for_section));
+        }
+
+        const { data } = await query;
+        candidatesData = data || [];
+      }
+    } else {
+      // Fallback to default behavior (same batch only)
+      const { data } = await supabase
+        .from('candidates')
+        .select('*')
+        .eq('clan_id', clanId)
+        .eq('batch', voterData.batch)
+        .eq('is_active', true);
+      
+      candidatesData = data || [];
+    }
+    
+    setCandidates(candidatesData);
 
     // Check for existing vote
     const { data: voteData } = await supabase
