@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, CheckCircle } from "lucide-react";
-import { Session, User } from "@supabase/supabase-js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,66 +31,40 @@ const ClanVoting = () => {
   const [settings, setSettings] = useState<any>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session) {
-          setTimeout(() => {
-            checkAuthAndLoadData(session.user);
-          }, 0);
-        } else {
-          navigate('/auth');
-        }
-      }
-    );
-
-    // THEN check for existing session
+    // Check if admin/user is logged in (for session management)
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session) {
-        checkAuthAndLoadData(session.user);
-      } else {
-        navigate('/auth');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [clanId, navigate]);
-
-  const checkAuthAndLoadData = async (user: User) => {
-    try {
-      // Get voter info from registry
-      const { data: voterData } = await supabase
-        .from('voter_registry')
-        .select('*')
-        .eq('email', user.email)
-        .single();
-
-      if (!voterData) {
+      if (!session) {
         toast({
-          title: "Not Registered",
-          description: "You are not registered as a voter",
+          title: "Session Required",
+          description: "Please log in to supervise voting",
           variant: "destructive",
         });
-        navigate('/');
+        navigate('/auth');
         return;
       }
 
+      // Get voter info from sessionStorage (set by VoterLookup page)
+      const storedVoter = sessionStorage.getItem('voter');
+      if (!storedVoter) {
+        toast({
+          title: "No Voter Selected",
+          description: "Please look up voter first",
+          variant: "destructive",
+        });
+        navigate('/voters');
+        return;
+      }
+
+      const voterData = JSON.parse(storedVoter);
+      
       // Enforce same-clan-only voting
       if (voterData.clan !== clanId) {
         toast({
           title: "Access Denied",
-          description: "You can only vote in your own clan. Redirecting...",
+          description: "This voter belongs to a different clan. Redirecting...",
           variant: "destructive",
         });
         setTimeout(() => navigate(`/vote/${voterData.clan}`), 2000);
@@ -99,13 +72,11 @@ const ClanVoting = () => {
       }
       
       setVoter(voterData);
-      await loadData(voterData);
+      loadData(voterData);
       setLoading(false);
-    } catch (error) {
-      console.error('Error checking auth:', error);
-      navigate('/auth');
-    }
-  };
+    });
+  }, [clanId, navigate]);
+
 
   const loadData = async (voterData: any) => {
     
@@ -250,8 +221,8 @@ const ClanVoting = () => {
         description: `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully. Ready for next voter.`,
       });
 
-      // Sign out and redirect to voter lookup for next voter
-      await supabase.auth.signOut();
+      // Clear voter from sessionStorage and redirect to voter lookup for next voter
+      sessionStorage.removeItem('voter');
       setTimeout(() => navigate('/voters'), 1500);
     } catch (error: any) {
       console.error('Vote error:', error);
