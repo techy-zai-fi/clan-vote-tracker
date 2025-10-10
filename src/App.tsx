@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
-import VoterLookup from "./pages/VoterLookup";
 import ClansOverview from "./pages/ClansOverview";
 import ClanMain from "./pages/ClanMain";
 import VoteHub from "./pages/VoteHub";
@@ -26,7 +25,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/voters" element={<VoterLookup />} />
           <Route path="/clans" element={<ClansOverview />} />
           <Route path="/clans/:clanId" element={<ClanMain />} />
           <Route path="/vote" element={<VoteHub />} />

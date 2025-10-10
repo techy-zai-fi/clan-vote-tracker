@@ -107,6 +107,8 @@ const VotingSupervisor = () => {
           voter_regnum: voter.reg_num,
           voter_clan: voter.clan,
           voter_name: voter.name,
+          voter_batch: voter.batch,
+          voter_year: voter.year,
           status: 'pending'
         });
 

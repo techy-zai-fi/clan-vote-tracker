@@ -174,16 +174,15 @@ const ClanMain = () => {
                 Cast Your Vote
               </Button>
             ) : (
-              <Link to="/voters">
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg px-12 py-6 border-2 hover:bg-primary/10"
-                >
-                  <Target className="mr-2 h-6 w-6" />
-                  Register to Vote
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                variant="outline"
+                disabled
+                className="text-lg px-12 py-6 border-2 cursor-not-allowed opacity-70"
+              >
+                <Target className="mr-2 h-6 w-6" />
+                Come and Vote at Station
+              </Button>
             )}
           </div>
         </Card>
