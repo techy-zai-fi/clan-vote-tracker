@@ -63,10 +63,12 @@ const StatsView = () => {
       ]);
 
       // Calculate stats
-      const votersByEmail = new Map((voters || []).map((v: any) => [v.email, v]));
-      const votersByReg = new Map((voters || []).map((v: any) => [v.reg_num, v]));
       const uniqueVoters = new Set(votes?.map((v: any) => v.voter_email) || []).size;
       const turnout = voterCount ? (uniqueVoters / voterCount) * 100 : 0;
+
+      // Create lookup maps for voter info
+      const votersByEmail = new Map((voters || []).map((v: any) => [v.email, v]));
+      const votersByReg = new Map((voters || []).map((v: any) => [v.reg_num, v]));
 
       // Group by batch
       const batchGroups: Record<string, number> = {};
@@ -397,42 +399,25 @@ const StatsView = () => {
                     </Card>
                   </div>
 
-                  {/* Clan Breakdowns */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Card className="p-4">
-                      <h5 className="font-semibold mb-3">Votes by Batch</h5>
-                      <div className="space-y-2">
-                        {Object.entries(clan.batchBreakdown).map(([batch, count]: [string, any]) => (
-                          <div key={batch} className="flex justify-between items-center">
-                            <span className="text-sm">{batch}</span>
-                            <div className="text-right">
-                              <span className="font-medium mr-2">{count}</span>
-                              <span className="text-xs text-muted-foreground">
-                                ({Math.round((count / clan.totalVotes) * 100)}%)
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-
-                    <Card className="p-4">
-                      <h5 className="font-semibold mb-3">Votes by Gender</h5>
-                      <div className="space-y-2">
-                        {Object.entries(clan.genderBreakdown).map(([gender, count]: [string, any]) => (
-                          <div key={gender} className="flex justify-between items-center">
-                            <span className="text-sm">{gender}</span>
-                            <div className="text-right">
-                              <span className="font-medium mr-2">{count}</span>
-                              <span className="text-xs text-muted-foreground">
-                                ({Math.round((count / clan.totalVotes) * 100)}%)
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  </div>
+                   {/* Clan Breakdowns */}
+                   <div className="grid md:grid-cols-1 gap-4">
+                     <Card className="p-4">
+                       <h5 className="font-semibold mb-3">Votes by Gender</h5>
+                       <div className="space-y-2">
+                         {Object.entries(clan.genderBreakdown).map(([gender, count]: [string, any]) => (
+                           <div key={gender} className="flex justify-between items-center">
+                             <span className="text-sm">{gender}</span>
+                             <div className="text-right">
+                               <span className="font-medium mr-2">{count}</span>
+                               <span className="text-xs text-muted-foreground">
+                                 ({Math.round((count / clan.totalVotes) * 100)}%)
+                               </span>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </Card>
+                   </div>
 
                   {/* Top Candidates in Clan */}
                   <Card className="p-4">
