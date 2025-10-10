@@ -69,9 +69,9 @@ const ClansOverview = () => {
                   </div>
                   <div className="relative z-10 text-center text-white transform group-hover:scale-110 transition-transform duration-500">
                     {clan.logo_url ? (
-                      <img src={clan.logo_url} alt={clan.name} className="h-16 w-16 mx-auto mb-4 object-contain drop-shadow-2xl" />
+                      <img src={clan.logo_url} alt={clan.name} className="h-24 w-24 mx-auto mb-4 object-contain drop-shadow-2xl" />
                     ) : (
-                      <Trophy className="h-12 w-12 mx-auto mb-4 text-secondary drop-shadow-lg" />
+                      <Trophy className="h-20 w-20 mx-auto mb-4 text-secondary drop-shadow-lg" />
                     )}
                     <div className="text-7xl font-black mb-2 drop-shadow-2xl">{clan.id}</div>
                     <div className="text-3xl font-bold drop-shadow-md">{clan.name}</div>
