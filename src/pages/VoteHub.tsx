@@ -1,89 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Shield } from "lucide-react";
-import { Session, User } from "@supabase/supabase-js";
+import { useToast } from "@/hooks/use-toast";
 
 const VoteHub = () => {
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session) {
-          setTimeout(() => {
-            checkUserAndRedirect(session.user);
-          }, 0);
-        } else {
-          setLoading(false);
-          navigate('/auth');
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const checkSessionAndRedirect = async () => {
+      // Check if admin is logged in
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (session) {
-        checkUserAndRedirect(session.user);
-      } else {
-        setLoading(false);
+      if (!session) {
+        toast({
+          title: "Session Required",
+          description: "Please log in to supervise voting",
+          variant: "destructive",
+        });
         navigate('/auth');
+        return;
       }
-    });
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const checkUserAndRedirect = async (user: User) => {
-    try {
-      // Get user's clan from voter registry
-      const { data: voterData } = await supabase
-        .from('voter_registry')
-        .select('*')
-        .eq('email', user.email)
-        .single();
-
-      if (voterData?.clan) {
-        // Redirect to their clan voting page
-        navigate(`/vote/${voterData.clan}`);
+      // Check for voter data in sessionStorage
+      const storedVoter = sessionStorage.getItem('voter');
+      
+      if (storedVoter) {
+        const voterData = JSON.parse(storedVoter);
+        if (voterData.clan) {
+          navigate(`/vote/${voterData.clan}`);
+        } else {
+          navigate('/voters');
+        }
       } else {
-        setLoading(false);
+        // No voter selected, go to lookup page
+        navigate('/voters');
       }
-    } catch (error) {
-      console.error('Error checking user:', error);
-      setLoading(false);
-    }
-  };
+    };
 
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="p-8 text-center">
-          <Shield className="h-12 w-12 mx-auto mb-4 text-primary animate-pulse" />
-          <p className="text-muted-foreground">Loading...</p>
-        </Card>
-      </div>
-    );
-  }
+    checkSessionAndRedirect();
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
-      <Card className="p-8 text-center max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Redirecting...</h2>
-        <p className="text-muted-foreground">
-          Taking you to your clan voting page.
-        </p>
+      <Card className="p-8 text-center">
+        <Shield className="h-12 w-12 mx-auto mb-4 text-primary animate-pulse" />
+        <p className="text-muted-foreground">Loading...</p>
       </Card>
     </div>
   );
