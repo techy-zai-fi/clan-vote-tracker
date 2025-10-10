@@ -141,6 +141,56 @@ const AdminPortal = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        <Card className="mb-6 p-6 bg-gradient-to-r from-primary/10 via-primary/5 to-background">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            Voting Station Management
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <Button 
+              onClick={() => window.open('/voting-supervisor', '_blank')}
+              variant="default"
+              className="w-full"
+              size="lg"
+            >
+              <Users className="mr-2 h-5 w-5" />
+              Voting Supervisor
+            </Button>
+            <Button 
+              onClick={() => window.open('/voting-station/station-1', '_blank')}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              Station 1
+            </Button>
+            <Button 
+              onClick={() => window.open('/voting-station/station-2', '_blank')}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              Station 2
+            </Button>
+            <Button 
+              onClick={() => window.open('/voting-station/station-3', '_blank')}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              Station 3
+            </Button>
+            <Button 
+              onClick={() => window.open('/voting-station/station-4', '_blank')}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              Station 4
+            </Button>
+          </div>
+        </Card>
+
         <Tabs defaultValue="dashboard" className="space-y-6">
           <TabsList className="grid w-full grid-cols-9 lg:w-auto lg:inline-grid">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
