@@ -87,14 +87,14 @@ const ClanMain = () => {
   }, {} as Record<string, any[]>);
 
   return (
-    <div className="min-h-screen bg-background relative">
-      {clan.background_image_url && (
-        <div 
-          className="fixed inset-0 bg-cover bg-center bg-fixed"
-          style={{ backgroundImage: `url(${clan.background_image_url})` }}
-        >
-          <div className="absolute inset-0 bg-background/90 backdrop-blur-sm"></div>
-        </div>
+    <div 
+      className="min-h-screen relative bg-cover bg-center bg-fixed"
+      style={clan.bg_image ? {
+        backgroundImage: `url(${clan.bg_image})`,
+      } : undefined}
+    >
+      {clan.bg_image && (
+        <div className="fixed inset-0 bg-background/85 backdrop-blur-[2px]"></div>
       )}
       
       <div className="relative z-10">
