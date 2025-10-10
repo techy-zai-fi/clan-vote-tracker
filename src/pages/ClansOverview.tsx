@@ -73,8 +73,7 @@ const ClansOverview = () => {
                     ) : (
                       <Trophy className="h-20 w-20 mx-auto mb-4 text-secondary drop-shadow-lg" />
                     )}
-                    <div className="text-7xl font-black mb-2 drop-shadow-2xl">{clan.id}</div>
-                    <div className="text-3xl font-bold drop-shadow-md">{clan.name}</div>
+                    <div className="text-5xl font-bold drop-shadow-md">{clan.name}</div>
                   </div>
                 </div>
                 <div className="p-8 bg-gradient-to-br from-card to-muted/30">
