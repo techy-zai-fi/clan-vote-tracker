@@ -247,11 +247,12 @@ const ClanVoting = () => {
 
       toast({
         title: "Vote recorded",
-        description: `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully.`,
+        description: `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully. Ready for next voter.`,
       });
 
-      // Navigate back to home after short delay
-      setTimeout(() => navigate(`/clans/${clanId}`), 1500);
+      // Sign out and redirect to voter lookup for next voter
+      await supabase.auth.signOut();
+      setTimeout(() => navigate('/voters'), 1500);
     } catch (error: any) {
       console.error('Vote error:', error);
       toast({
