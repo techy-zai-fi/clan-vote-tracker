@@ -227,8 +227,9 @@ const VotingStation = () => {
 
       // Play beep sound
       try {
-        const beep = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGB0fPTgjMGHm7A7+OZRQ0PVKzm77BdGAg+ltryxnMpBSuAzvLaizsIGGS57OShTA0NTqnk8LlnHwU9k9rzyHosBCZ7yvDZij4KDFW07OqlVxEMRJzf8rpqJAU2gtPz0oA0BhxqvO7mnEoODlKo5O+zYBoGPJPa8sdyKgUpf8zy24k8CBlkvOrpoVEOClCl4vC4Zh4FN4TT89KCNQYbaLru5qBJDQpUq+TwsmEbBjyT2/LHcioFKX/M8tyIOggYY77r56JODwtQp+PwtmMfBTaF1PPTgjYGGme97uagSQ0KVKzk8LJgGgY8k9vyxnMpBSp/zPLciTwIG2S96+aiTA0MTqfk8LljHgU2hdTz04Q2BhpmvO7mnEoPDFOp5fCyYRoGPJPa88Z0KQUpgMzy3Ik8ChpkvevooU0PDVKq5PCyYhsGO5La88dyKgUrgsvy24k8ChljvevpoVANC1Gq5PCyYxsGOpLb88ZyKQUrf8zx3Io8Chtkvevno00ODU6m5PCzYh0FN4TU89OBNQYaaLzu5ZxKDgtTqOTwsmEbBjuS2/PGcikFK3/M8duKPAoZY73r6aJPDgtQqOPws2IdBjaF1PPTgTUGGWi87uacSQ0KU6fk77NgGgY7k9vxx3EpBSt/zPLbijsJGGS96+ijTw4MU6jk8LFiGwY7ktvzx3EpBSuAy/Hcijwj');
-        beep.play();
+        const audio = new Audio('/beep.mp3'); // Path relative to the public directory
+        audio.volume = 1.0; // Set volume to maximum
+        audio.play();
       } catch (audioError) {
         console.error('Error playing beep:', audioError);
       }
@@ -297,7 +298,7 @@ const VotingStation = () => {
                 <p className="font-semibold text-green-900 dark:text-green-100">Voter Ready</p>
               </div>
               <p className="text-sm text-green-700 dark:text-green-300">
-                {voterName} • {voter.batch} • {clan?.name}
+                {clan?.name}
               </p>
             </div>
 
