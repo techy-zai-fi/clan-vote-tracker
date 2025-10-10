@@ -16,6 +16,27 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     loadStats();
+
+    // Subscribe to real-time vote updates
+    const channel = supabase
+      .channel('dashboard-votes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'votes'
+        },
+        (payload) => {
+          console.log('Vote change detected:', payload);
+          loadStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadStats = async () => {
@@ -39,19 +60,28 @@ const AdminDashboard = () => {
         .select('*', { count: 'exact', head: true })
         .eq('is_active', true);
 
-      // Count votes
-      const { data: votes, count: voteCount } = await supabase
-        .from('votes')
-        .select('*, voter_registry!inner(gender)', { count: 'exact' });
+      // Count votes and get all voters
+      const [
+        { data: votes, count: voteCount },
+        { data: voters }
+      ] = await Promise.all([
+        supabase.from('votes').select('*', { count: 'exact' }),
+        supabase.from('voter_registry').select('*')
+      ]);
 
       // Calculate turnout
-      const uniqueVoters = new Set(votes?.map(v => v.voter_email) || []).size;
+      const uniqueVoters = new Set(votes?.map((v: any) => v.voter_email) || []).size;
       const turnout = voterCount ? (uniqueVoters / voterCount) * 100 : 0;
+
+      // Create lookup maps for voter info
+      const votersByEmail = new Map((voters || []).map((v: any) => [v.email, v]));
+      const votersByReg = new Map((voters || []).map((v: any) => [v.reg_num, v]));
 
       // Group by gender
       const genderGroups: Record<string, number> = {};
       votes?.forEach((vote: any) => {
-        const gender = vote.voter_registry?.gender || 'Unknown';
+        const vinfo = votersByEmail.get(vote.voter_email) || votersByReg.get(vote.voter_regnum);
+        const gender = vinfo?.gender || 'Unknown';
         genderGroups[gender] = (genderGroups[gender] || 0) + 1;
       });
 
