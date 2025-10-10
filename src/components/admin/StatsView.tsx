@@ -56,27 +56,31 @@ const StatsView = () => {
         { data: voters },
       ] = await Promise.all([
         supabase.from('voter_registry').select('*', { count: 'exact', head: true }),
-        supabase.from('votes').select('*, voter_registry!inner(gender, batch)'),
+        supabase.from('votes').select('*'),
         supabase.from('candidates').select('*, votes(count)'),
         supabase.from('clans').select('*'),
         supabase.from('voter_registry').select('*'),
       ]);
 
       // Calculate stats
-      const uniqueVoters = new Set(votes?.map(v => v.voter_email) || []).size;
+      const votersByEmail = new Map((voters || []).map((v: any) => [v.email, v]));
+      const votersByReg = new Map((voters || []).map((v: any) => [v.reg_num, v]));
+      const uniqueVoters = new Set(votes?.map((v: any) => v.voter_email) || []).size;
       const turnout = voterCount ? (uniqueVoters / voterCount) * 100 : 0;
 
       // Group by batch
       const batchGroups: Record<string, number> = {};
       votes?.forEach((vote: any) => {
-        const batch = vote.voter_registry?.batch || 'Unknown';
+        const vinfo = votersByEmail.get(vote.voter_email) || votersByReg.get(vote.voter_regnum);
+        const batch = vinfo?.batch || 'Unknown';
         batchGroups[batch] = (batchGroups[batch] || 0) + 1;
       });
 
       // Group by gender
       const genderGroups: Record<string, number> = {};
       votes?.forEach((vote: any) => {
-        const gender = vote.voter_registry?.gender || 'Unknown';
+        const vinfo = votersByEmail.get(vote.voter_email) || votersByReg.get(vote.voter_regnum);
+        const gender = vinfo?.gender || 'Unknown';
         genderGroups[gender] = (genderGroups[gender] || 0) + 1;
       });
 
@@ -103,14 +107,16 @@ const StatsView = () => {
         // Breakdown by batch for this clan
         const clanBatchBreakdown: Record<string, number> = {};
         clanVotes.forEach((vote: any) => {
-          const batch = vote.voter_registry?.batch || 'Unknown';
+          const vinfo = votersByEmail.get(vote.voter_email) || votersByReg.get(vote.voter_regnum);
+          const batch = vinfo?.batch || 'Unknown';
           clanBatchBreakdown[batch] = (clanBatchBreakdown[batch] || 0) + 1;
         });
 
         // Breakdown by gender for this clan
         const clanGenderBreakdown: Record<string, number> = {};
         clanVotes.forEach((vote: any) => {
-          const gender = vote.voter_registry?.gender || 'Unknown';
+          const vinfo = votersByEmail.get(vote.voter_email) || votersByReg.get(vote.voter_regnum);
+          const gender = vinfo?.gender || 'Unknown';
           clanGenderBreakdown[gender] = (clanGenderBreakdown[gender] || 0) + 1;
         });
 
