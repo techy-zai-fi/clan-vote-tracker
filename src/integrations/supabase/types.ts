@@ -431,10 +431,12 @@ export type Database = {
           id: string
           station_id: string
           status: Database["public"]["Enums"]["voting_session_status"]
+          voter_batch: string | null
           voter_clan: string
           voter_email: string
           voter_name: string | null
           voter_regnum: string
+          voter_year: number | null
         }
         Insert: {
           completed_at?: string | null
@@ -442,10 +444,12 @@ export type Database = {
           id?: string
           station_id: string
           status?: Database["public"]["Enums"]["voting_session_status"]
+          voter_batch?: string | null
           voter_clan: string
           voter_email: string
           voter_name?: string | null
           voter_regnum: string
+          voter_year?: number | null
         }
         Update: {
           completed_at?: string | null
@@ -453,10 +457,12 @@ export type Database = {
           id?: string
           station_id?: string
           status?: Database["public"]["Enums"]["voting_session_status"]
+          voter_batch?: string | null
           voter_clan?: string
           voter_email?: string
           voter_name?: string | null
           voter_regnum?: string
+          voter_year?: number | null
         }
         Relationships: [
           {
