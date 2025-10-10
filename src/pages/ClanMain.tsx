@@ -87,13 +87,23 @@ const ClanMain = () => {
   }, {} as Record<string, any[]>);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Clan Arena Header */}
-      <header 
-        className="relative text-white overflow-hidden"
-        style={{ background: getClanStyle().background }}
-      >
-        <div className="absolute inset-0 bg-black/20"></div>
+    <div className="min-h-screen bg-background relative">
+      {clan.background_image_url && (
+        <div 
+          className="fixed inset-0 bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: `url(${clan.background_image_url})` }}
+        >
+          <div className="absolute inset-0 bg-background/90 backdrop-blur-sm"></div>
+        </div>
+      )}
+      
+      <div className="relative z-10">
+        {/* Clan Arena Header */}
+        <header 
+          className="relative text-white overflow-hidden"
+          style={{ background: getClanStyle().background }}
+        >
+          <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-black rounded-full blur-3xl"></div>
@@ -175,20 +185,11 @@ const ClanMain = () => {
         </Card>
 
         {/* Warriors Section */}
-        <div className="mb-8 relative rounded-xl overflow-hidden">
-          {clan.background_image_url && (
-            <div 
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${clan.background_image_url})` }}
-            >
-              <div className="absolute inset-0 bg-background/95 backdrop-blur-sm"></div>
-            </div>
-          )}
-          <div className="relative p-8">
-            <div className="flex items-center gap-4 mb-8">
-              <Shield className="h-10 w-10 text-primary" />
-              <h3 className="text-4xl font-black">Clan Warriors</h3>
-            </div>
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-8">
+            <Shield className="h-10 w-10 text-primary" />
+            <h3 className="text-4xl font-black">Clan Warriors</h3>
+          </div>
           
           {Object.keys(candidatesByBatch).length > 0 ? (
             <div className="space-y-12">
@@ -252,8 +253,8 @@ const ClanMain = () => {
               <p className="text-muted-foreground">Champions will be announced soon. Stay tuned!</p>
             </Card>
           )}
-          </div>
         </div>
+      </div>
       </div>
     </div>
   );
