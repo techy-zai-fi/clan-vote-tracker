@@ -22,6 +22,27 @@ const StatsView = () => {
 
   useEffect(() => {
     loadDetailedStats();
+
+    // Subscribe to real-time vote updates
+    const channel = supabase
+      .channel('votes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'votes'
+        },
+        (payload) => {
+          console.log('Vote change detected:', payload);
+          loadDetailedStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadDetailedStats = async () => {
