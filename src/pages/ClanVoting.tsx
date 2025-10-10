@@ -190,6 +190,9 @@ const ClanVoting = () => {
     setShowConfirm(false);
 
     try {
+      const sessionId = voter.sessionId;
+      const stationId = voter.stationId;
+
       const voteData = {
         voter_email: voter.email,
         voter_regnum: voter.reg_num,
@@ -213,17 +216,51 @@ const ClanVoting = () => {
       await supabase.from('audit_log').insert({
         actor_label: voter.email,
         action: existingVote ? 'UPDATE_VOTE' : 'CAST_VOTE',
-        payload_json: { clan_id: clanId, candidate_id: selectedCandidate },
+        payload_json: { 
+          clan_id: clanId, 
+          candidate_id: selectedCandidate,
+          station_session: sessionId || null 
+        },
       });
+
+      // If this is from a voting station, update session status and play beep
+      if (sessionId) {
+        await supabase
+          .from('voting_sessions')
+          .update({ 
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', sessionId);
+
+        // Play beep sound
+        try {
+          const beep = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGB0fPTgjMGHm7A7+OZRQ0PVKzm77BdGAg+ltryxnMpBSuAzvLaizsIGGS57OShTA0NTqnk8LlnHwU9k9rzyHosBCZ7yvDZij4KDFW07OqlVxEMRJzf8rpqJAU2gtPz0oA0BhxqvO7mnEoODlKo5O+zYBoGPJPa8sdyKgUpf8zy24k8CBlkvOrpoVEOClCl4vC4Zh4FN4TT89KCNQYbaLru5qBJDQpUq+TwsmEbBjyT2/LHcioFKX/M8tyIOggYY77r56JODwtQp+PwtmMfBTaF1PPTgjYGGme97uagSQ0KVKzk8LJgGgY8k9vyxnMpBSp/zPLciTwIG2S96+aiTA0MTqfk8LljHgU2hdTz04Q2BhpmvO7mnEoPDFOp5fCyYRoGPJPa88Z0KQUpgMzy3Ik8ChpkvevooU0PDVKq5PCyYhsGO5La88dyKgUrgsvy24k8ChljvevpoVANC1Gq5PCyYxsGOpLb88ZyKQUrf8zx3Io8Chtkvevno00ODU6m5PCzYh0FN4TU89OBNQYaaLzu5ZxKDgtTqOTwsmEbBjuS2/PGcikFK3/M8duKPAoZY73r6aJPDgtQqOPws2IdBjaF1PPTgTUGGWi87uacSQ0KU6fk77NgGgY7k9vxx3EpBSt/zPLbijsJGGS96+ijTw4MU6jk8LFiGwY7ktvzx3EpBSuAy/Hcijwj');
+          beep.play();
+        } catch (audioError) {
+          console.error('Error playing beep:', audioError);
+        }
+      }
 
       toast({
         title: "Vote recorded",
-        description: `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully. Ready for next voter.`,
+        description: sessionId 
+          ? "Your vote has been recorded. Thank you!" 
+          : `Your vote for ${clan?.name} has been ${existingVote ? 'updated' : 'cast'} successfully. Ready for next voter.`,
       });
 
-      // Clear voter from sessionStorage and redirect to voter lookup for next voter
+      // Clear voter from sessionStorage and redirect
       sessionStorage.removeItem('voter');
-      setTimeout(() => navigate('/voters'), 1500);
+      
+      setTimeout(() => {
+        if (sessionId && stationId) {
+          // For voting station, go back to station waiting page
+          navigate(`/voting-station/${stationId}`);
+        } else {
+          // For regular voting, go back to voter lookup
+          navigate('/voters');
+        }
+      }, 2000);
     } catch (error: any) {
       console.error('Vote error:', error);
       toast({

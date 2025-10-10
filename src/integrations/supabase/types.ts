@@ -424,6 +424,50 @@ export type Database = {
         }
         Relationships: []
       }
+      voting_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          station_id: string
+          status: Database["public"]["Enums"]["voting_session_status"]
+          voter_clan: string
+          voter_email: string
+          voter_name: string | null
+          voter_regnum: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          station_id: string
+          status?: Database["public"]["Enums"]["voting_session_status"]
+          voter_clan: string
+          voter_email: string
+          voter_name?: string | null
+          voter_regnum: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          station_id?: string
+          status?: Database["public"]["Enums"]["voting_session_status"]
+          voter_clan?: string
+          voter_email?: string
+          voter_name?: string | null
+          voter_regnum?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_voter_email"
+            columns: ["voter_email"]
+            isOneToOne: false
+            referencedRelation: "voter_registry"
+            referencedColumns: ["email"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -441,6 +485,7 @@ export type Database = {
       app_role: "admin" | "user"
       batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD" | "SEP" | "All"
       gender_type: "Male" | "Female" | "Other" | "Prefer not to say"
+      voting_session_status: "pending" | "voting" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -571,6 +616,7 @@ export const Constants = {
       app_role: ["admin", "user"],
       batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD", "SEP", "All"],
       gender_type: ["Male", "Female", "Other", "Prefer not to say"],
+      voting_session_status: ["pending", "voting", "completed", "cancelled"],
     },
   },
 } as const

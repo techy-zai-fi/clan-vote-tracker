@@ -12,6 +12,8 @@ import ClanVoting from "./pages/ClanVoting";
 import AdminPortal from "./pages/AdminPortal";
 import Auth from "./pages/Auth";
 import Results from "./pages/Results";
+import VotingSupervisor from "./pages/VotingSupervisor";
+import VotingStation from "./pages/VotingStation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<AdminPortal />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/voting-supervisor" element={<VotingSupervisor />} />
+          <Route path="/voting-station/:stationId" element={<VotingStation />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
