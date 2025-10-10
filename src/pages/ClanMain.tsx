@@ -175,11 +175,20 @@ const ClanMain = () => {
         </Card>
 
         {/* Warriors Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-8">
-            <Shield className="h-10 w-10 text-primary" />
-            <h3 className="text-4xl font-black">Clan Warriors</h3>
-          </div>
+        <div className="mb-8 relative rounded-xl overflow-hidden">
+          {clan.background_image_url && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${clan.background_image_url})` }}
+            >
+              <div className="absolute inset-0 bg-background/95 backdrop-blur-sm"></div>
+            </div>
+          )}
+          <div className="relative p-8">
+            <div className="flex items-center gap-4 mb-8">
+              <Shield className="h-10 w-10 text-primary" />
+              <h3 className="text-4xl font-black">Clan Warriors</h3>
+            </div>
           
           {Object.keys(candidatesByBatch).length > 0 ? (
             <div className="space-y-12">
@@ -243,6 +252,7 @@ const ClanMain = () => {
               <p className="text-muted-foreground">Champions will be announced soon. Stay tuned!</p>
             </Card>
           )}
+          </div>
         </div>
       </div>
     </div>
