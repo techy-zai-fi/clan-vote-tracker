@@ -263,10 +263,10 @@ const ClanVoting = () => {
           </Link>
           <div className="text-center text-white">
             {clan.logo_url && (
-              <img src={clan.logo_url} alt={clan.name} className="h-16 w-16 mx-auto mb-4 object-contain drop-shadow-2xl" />
+              <img src={clan.logo_url} alt={clan.name} className="h-24 w-24 mx-auto mb-4 object-contain drop-shadow-2xl" />
             )}
             <div className="text-7xl font-bold mb-2">{clan.id}</div>
-            <h1 className="text-4xl font-bold mb-2">{clan.name}</h1>
+            <h1 className="text-3xl font-bold mb-2">{clan.name}</h1>
             <p className="text-xl italic">"{clan.quote}"</p>
           </div>
         </div>

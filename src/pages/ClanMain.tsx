@@ -114,13 +114,13 @@ const ClanMain = () => {
           <div className="text-center py-12">
             <div className="mb-6">
               {clan.logo_url ? (
-                <img src={clan.logo_url} alt={clan.name} className="h-24 w-24 mx-auto object-contain drop-shadow-2xl" />
+                <img src={clan.logo_url} alt={clan.name} className="h-36 w-36 mx-auto object-contain drop-shadow-2xl" />
               ) : (
-                <Trophy className="h-20 w-20 mx-auto text-secondary drop-shadow-2xl" />
+                <Trophy className="h-30 w-30 mx-auto text-secondary drop-shadow-2xl" />
               )}
             </div>
             <h1 className="text-8xl font-black mb-6 drop-shadow-2xl tracking-tight">{clan.id}</h1>
-            <h2 className="text-4xl font-bold mb-4 drop-shadow-lg">{clan.name} Arena</h2>
+            <h2 className="text-3xl font-bold mb-4 drop-shadow-lg">{clan.name} Arena</h2>
             <p className="text-2xl italic opacity-90 drop-shadow-md max-w-2xl mx-auto">"{clan.quote}"</p>
           </div>
         </div>

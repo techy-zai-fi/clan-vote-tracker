@@ -140,12 +140,12 @@ const ClanManagement = () => {
                     <img 
                       src={clan.logo_url} 
                       alt={clan.name}
-                      className="h-16 w-16 mx-auto mb-2 object-contain drop-shadow-lg"
+                      className="h-24 w-24 mx-auto mb-2 object-contain drop-shadow-lg"
                     />
                   ) : (
                     <div className="text-5xl font-bold mb-1">{clan.id}</div>
                   )}
-                  <div className="text-xl font-bold drop-shadow-md">{clan.name}</div>
+                  <div className="text-base font-bold drop-shadow-md">{clan.name}</div>
                 </div>
               </div>
             </div>
