@@ -101,6 +101,17 @@ const VotingStation = () => {
     
     if (clanData) setClan(clanData);
 
+    // Check if batch/year data exists
+    if (!voterData.batch || !voterData.year) {
+      toast({
+        title: "Missing Voter Data",
+        description: "Voter batch or year information is missing. Please contact admin.",
+        variant: "destructive",
+      });
+      setCandidates([]);
+      return;
+    }
+
     // Load settings
     const { data: settingsData } = await supabase
       .from('election_settings')
@@ -278,7 +289,7 @@ const VotingStation = () => {
               Supervisor will assign a voter to this station
             </p>
           </div>
-        ) : voter && candidates.length > 0 ? (
+        ) : voter && clan ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
             <div className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
@@ -290,11 +301,18 @@ const VotingStation = () => {
               </p>
             </div>
 
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Select a Candidate:</h3>
-              <RadioGroup value={selectedCandidate} onValueChange={setSelectedCandidate}>
-                <div className="space-y-3">
-                  {candidates.map((candidate) => (
+            {candidates.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  No candidates available for {voter.batch} in {clan.name}.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Select a Candidate:</h3>
+                <RadioGroup value={selectedCandidate} onValueChange={setSelectedCandidate}>
+                  <div className="space-y-3">
+                    {candidates.map((candidate) => (
                     <Card key={candidate.id} className="p-4 hover:bg-accent/5 cursor-pointer transition-colors">
                       <div className="flex items-start gap-3">
                         <RadioGroupItem value={candidate.id} id={candidate.id} className="mt-1" />
@@ -320,25 +338,31 @@ const VotingStation = () => {
                         </Label>
                       </div>
                     </Card>
-                  ))}
-                </div>
-              </RadioGroup>
-            </div>
+                    ))}
+                  </div>
+                </RadioGroup>
 
-            <Button 
-              onClick={handleSubmit}
-              disabled={!selectedCandidate || isSubmitting}
-              className="w-full text-white text-lg py-6"
-              style={{ background: getClanStyle().background }}
-              size="lg"
-            >
-              {isSubmitting ? "Recording Vote..." : "Cast Vote"}
-            </Button>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={!selectedCandidate || isSubmitting}
+                  className="w-full text-white text-lg py-6 mt-6"
+                  style={{ background: getClanStyle().background }}
+                  size="lg"
+                >
+                  {isSubmitting ? "Recording Vote..." : "Cast Vote"}
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : clan ? (
+          <div className="space-y-4 py-8">
+            <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
+            <p className="text-lg font-semibold">Loading candidates for {clan.name}...</p>
           </div>
         ) : (
           <div className="space-y-4 py-8">
             <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
-            <p className="text-lg font-semibold">Loading candidates for {voterName}...</p>
+            <p className="text-lg font-semibold">Loading...</p>
           </div>
         )}
 

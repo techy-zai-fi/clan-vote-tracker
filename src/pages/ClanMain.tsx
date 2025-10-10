@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,10 +8,8 @@ import { Badge } from "@/components/ui/badge";
 
 const ClanMain = () => {
   const { clanId } = useParams();
-  const navigate = useNavigate();
   const [clan, setClan] = useState<any>(null);
   const [candidates, setCandidates] = useState<any[]>([]);
-  const [voter, setVoter] = useState<any>(null);
 
   useEffect(() => {
     loadData();
@@ -26,12 +24,6 @@ const ClanMain = () => {
       .single();
     
     if (clanData) setClan(clanData);
-
-    // Load voter data if available
-    const voterData = sessionStorage.getItem('voter');
-    if (voterData) {
-      setVoter(JSON.parse(voterData));
-    }
 
     // Load all active candidates for this clan
     const { data: candidatesData } = await supabase
@@ -58,15 +50,6 @@ const ClanMain = () => {
       mainColor: clan.main_color,
       subColor: clan.sub_color,
     };
-  };
-
-  const handleVoteNow = () => {
-    const voterData = sessionStorage.getItem('voter');
-    if (!voterData) {
-      navigate('/voters');
-      return;
-    }
-    navigate(`/vote/${clanId}`);
   };
 
   if (!clan) {
@@ -156,34 +139,17 @@ const ClanMain = () => {
             </div>
             <h3 className="text-3xl font-black mb-4">Ready for Battle?</h3>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {voter 
-                ? voter.clan === clanId 
-                  ? `Step into the arena and cast your vote for ${clan.name}'s champion. Your voice determines the victor!`
-                  : "Warriors can only vote in their home arena. This clan's battle is reserved for its members."
-                : "Register as a warrior to unlock voting privileges and support your champion!"
-              }
+              Visit a voting station to cast your vote for {clan.name}'s champion. Station-based voting ensures security and fairness for all warriors.
             </p>
-            {voter?.clan === clanId ? (
-              <Button 
-                size="lg" 
-                onClick={handleVoteNow} 
-                className="text-lg px-12 py-6 text-white hover:shadow-2xl transition-all hover:scale-105"
-                style={{ background: `linear-gradient(135deg, ${getClanStyle().mainColor}, ${getClanStyle().subColor})` }}
-              >
-                <Swords className="mr-2 h-6 w-6" />
-                Cast Your Vote
-              </Button>
-            ) : (
-              <Button 
-                size="lg" 
-                variant="outline"
-                disabled
-                className="text-lg px-12 py-6 border-2 cursor-not-allowed opacity-70"
-              >
-                <Target className="mr-2 h-6 w-6" />
-                Come and Vote at Station
-              </Button>
-            )}
+            <Button 
+              size="lg" 
+              variant="outline"
+              disabled
+              className="text-lg px-12 py-6 border-2 cursor-not-allowed opacity-70"
+            >
+              <Target className="mr-2 h-6 w-6" />
+              Come and Vote at Station
+            </Button>
           </div>
         </Card>
 
