@@ -19,21 +19,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 🧩 Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ⚙️ Setup Node.js (stable LTS)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
+      # 🧼 Robust dependency install (avoids hanging npm ci)
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install -g npm@10.5.0
+          npm cache clean --force
+          npm ci --prefer-offline --no-audit
 
+      # ⚡ Build project using Vite
       - name: Build project
         run: npm run build
 
+      # 📦 Upload build output to Pages artifact
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -47,6 +55,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # 🚀 Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
