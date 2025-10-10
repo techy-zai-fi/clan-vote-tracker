@@ -301,6 +301,7 @@ const VotingRules = () => {
                       <SelectValue placeholder="Select batch" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
+                      <SelectItem value="All">All</SelectItem>
                       {voterBatches.map((batch) => (
                         <SelectItem key={batch} value={batch}>{batch}</SelectItem>
                       ))}
@@ -334,6 +335,7 @@ const VotingRules = () => {
                       <SelectValue placeholder="Select batch" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
+                      <SelectItem value="All">All</SelectItem>
                       {candidateBatches.map((batch) => (
                         <SelectItem key={batch} value={batch}>{batch}</SelectItem>
                       ))}

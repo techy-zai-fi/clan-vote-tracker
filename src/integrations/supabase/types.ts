@@ -439,7 +439,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
-      batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD" | "SEP"
+      batch_type: "MBA" | "HHM" | "DBM" | "IPM" | "PHD" | "SEP" | "All"
       gender_type: "Male" | "Female" | "Other" | "Prefer not to say"
     }
     CompositeTypes: {
@@ -569,7 +569,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD", "SEP"],
+      batch_type: ["MBA", "HHM", "DBM", "IPM", "PHD", "SEP", "All"],
       gender_type: ["Male", "Female", "Other", "Prefer not to say"],
     },
   },
