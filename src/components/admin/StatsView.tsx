@@ -292,7 +292,7 @@ const StatsView = () => {
                 <div className="text-right">
                   <span className="text-muted-foreground mr-2">{count}</span>
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round((count / stats.totalVotes) * 100)}%)
+                    ({stats.totalVotes > 0 ? Math.round((count / stats.totalVotes) * 100) : 0}%)
                   </span>
                 </div>
               </div>
@@ -312,7 +312,7 @@ const StatsView = () => {
                 <div className="text-right">
                   <span className="text-muted-foreground mr-2">{count}</span>
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round((count / stats.totalVotes) * 100)}%)
+                    ({stats.totalVotes > 0 ? Math.round((count / stats.totalVotes) * 100) : 0}%)
                   </span>
                 </div>
               </div>
@@ -332,7 +332,7 @@ const StatsView = () => {
                 <div className="text-right">
                   <span className="text-muted-foreground mr-2">{count}</span>
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round((count / stats.totalVotes) * 100)}%)
+                    ({stats.totalVotes > 0 ? Math.round((count / stats.totalVotes) * 100) : 0}%)
                   </span>
                 </div>
               </div>
@@ -410,7 +410,7 @@ const StatsView = () => {
                              <div className="text-right">
                                <span className="font-medium mr-2">{count}</span>
                                <span className="text-xs text-muted-foreground">
-                                 ({Math.round((count / clan.totalVotes) * 100)}%)
+                                 ({clan.totalVotes > 0 ? Math.round((count / clan.totalVotes) * 100) : 0}%)
                                </span>
                              </div>
                            </div>
